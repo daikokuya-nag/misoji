@@ -1,0 +1,1 @@
+<?php/** * SQLアクセス時の定数 * * @copyright * @license * @author * @link */	define('LOCATIONURL' ,'localhost');	define('USER'        ,'root');	define('DBPASS'      ,'henokappa');	define('DBNAME'      ,'misoji2018');?>
