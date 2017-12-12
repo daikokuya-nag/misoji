@@ -4,6 +4,7 @@
 PHP4
 2016 Jan. 25 ver 1.0
 ********************/
+	session_start();
 
 //	require_once dirname(__FILE__) . '/../html/htmlNews5C.php';
 //

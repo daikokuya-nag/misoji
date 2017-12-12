@@ -4,6 +4,7 @@
 PHP5
 2016 Feb. 23 ver 1.0
 ********************/
+	session_start();
 
 	require_once dirname(__FILE__) . '/../../db/dbNews5C.php';
 	require_once dirname(__FILE__) . '/../../bld/bldNews5C.php';

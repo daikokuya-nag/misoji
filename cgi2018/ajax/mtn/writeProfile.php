@@ -5,6 +5,7 @@ PHP5
 2016 Feb. 24 ver 1.0
 2016 May  23 ver 1.1 アピールコメント追加
 ********************/
+	session_start();
 
 	require_once dirname(__FILE__) . '/../../db/dbProfile5C.php';
 	require_once dirname(__FILE__) . '/../../db/dbWorks5C.php';

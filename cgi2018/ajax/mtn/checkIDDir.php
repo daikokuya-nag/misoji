@@ -4,6 +4,7 @@
 PHP4
 2014 Sep. 13 ver 1.0
 ********************/
+	session_start();
 
 	require_once dirname(__FILE__) . '/../../db/dbProfile5C.php';
 
