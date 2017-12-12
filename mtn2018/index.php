@@ -1,6 +1,6 @@
 <?php
 	session_start();
-	ini_set( 'display_errors', 1 );
+	ini_set('display_errors' ,1);
 
 	require_once dirname(__FILE__) . '/../cgi2018/sess/sess5C.php';
 	require_once dirname(__FILE__) . '/../cgi2018/logFile5C.php';
