@@ -164,6 +164,7 @@
 	</div>
 
 	<div id="tabsSystem" class="tabArea">
+		システム内容<span class="required">*</span>
 		<textarea id="systemStr" name="systemStr" cols="60" rows="4"></textarea>
 		<script type="text/javascript">
 			CKEDITOR.replace('systemStr' ,
@@ -174,10 +175,11 @@
 		</script>
 		<div id="warnSystemStr" class="parsley-errors-list filled"></div>
 		<hr>
-		<input type="button" value="反映" id="bldSystemInfo" onclick="writePriceVal();">	<!--  disabled="disabled" -->
+		<input type="button" value="出力" id="bldSystemInfo" onclick="writePriceVal();">	<!--  disabled="disabled" -->
 	</div>
 
 	<div id="tabsRecruit" class="tabArea">
+		求人内容<span class="required">*</span>
 		<textarea id="recruitStr" name="recruitStr" cols="60" rows="4"></textarea>
 		<script type="text/javascript">
 			CKEDITOR.replace('recruitStr' ,
@@ -188,13 +190,13 @@
 		</script>
 		<div id="warnRecruitStr" class="parsley-errors-list filled"></div>
 		<hr>
-		<input type="button" value="反映" id="bldRecruitInfo" onclick="writeRecruitVal();">	<!--  disabled="disabled" -->
+		<input type="button" value="出力" id="bldRecruitInfo" onclick="writeRecruitVal();">	<!--  disabled="disabled" -->
 	</div>
 
 	<div id="tabsTop" class="tabArea NOTUSE">
 		（とっぷ）
 		<hr>
-		<input type="button" value="反映" id="bldTopInfo" onclick="updTopInfo();" disabled="disabled">
+		<input type="button" value="出力" id="bldTopInfo" onclick="updTopInfo();" disabled="disabled">
 	</div>
 
 

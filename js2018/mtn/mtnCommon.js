@@ -1,6 +1,7 @@
 
 $(document).ready(function(){
 
+/*
 	CKEDITOR.on('instanceReady', function(){
 		$.each( CKEDITOR.instances, function(instance) {
 			CKEDITOR.instances[instance].on("change", function(e) {
@@ -14,6 +15,7 @@ $(document).ready(function(){
 			});
 		});
 	});
+*/
 
 	$("#tabA").tabs();
 });
