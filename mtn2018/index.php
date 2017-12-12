@@ -98,6 +98,8 @@
 <script src="../js2018/mtn/prof.js?<?php print $vesion; ?>"></script>
 <script src="../js2018/mtn/profOut.js?<?php print $vesion; ?>"></script>
 
+<script src="../js2018/mtn/system.js?<?php print $vesion; ?>"></script>
+
 <!--
 <script src="../js2018/mtn/profSeq.js?<?php print $vesion; ?>"></script>
 <script src="../js2018/mtn/profSeq2.js"></script>
@@ -124,11 +126,11 @@
 
 <div id="tabA">
 	<ul>
+		<li><a href="#tabsSystem">システム</a></li>
 		<li><a href="#tabsProfile">プロファイル</a></li>
 		<li><a href="#tabsNews">ニュース</a></li>
 
 <!--
-		<li><a href="#tabsSystem">システム</a></li>
 		<li><a href="#tabsRecruit">求人</a></li>
 		<li><a href="#tabsTop">とっぷ</a></li>
 -->
@@ -165,8 +167,16 @@
 
 	<div id="tabsSystem" class="tabArea NOTUSE">
 		（料金表）
+		<textarea id="systemStr" name="systemStr" cols="60" rows="4"></textarea>
+		<script type="text/javascript">
+			CKEDITOR.replace('systemStr' ,
+				{
+					height : 120
+					//skin : 'office2003'
+				});
+		</script>
 		<hr>
-		<input type="button" value="反映" id="bldSystemInfo" onclick="updSystemInfo();" disabled="disabled">
+		<input type="button" value="反映" id="bldSystemInfo" onclick="writePriceVal();">	<!--  disabled="disabled" -->
 	</div>
 
 	<div id="tabsRecruit" class="tabArea NOTUSE">
