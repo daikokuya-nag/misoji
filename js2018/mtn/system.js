@@ -3,14 +3,16 @@
 2016 Jan. 25 ver 1.0
 *************************/
 
-/***** 初期化 *****/
-jQuery(document).ready(function(){
-});
+var PRICE_STR;
 
-$(window).load(function(){
+/***** 初期化 *****/
+$(document).ready(function(){
 
 	/***** 料金表データの読み込み *****/
 	getPriceVal();
+});
+
+$(window).load(function(){
 });
 
 
@@ -20,6 +22,7 @@ $(window).load(function(){
 function getPriceVal() {
 
 var result;
+var str;
 var branchNo = $('#branchNo').val();
 
 	result = $.ajax({
@@ -34,8 +37,7 @@ var branchNo = $('#branchNo').val();
 
 	result.done(function(response) {
 					//console.debug(response);
-
-		CKEDITOR.instances.systemStr.setData(response);
+		PRICE_STR = response;
 	});
 
 	result.fail(function(result, textStatus, errorThrown) {
@@ -43,6 +45,8 @@ var branchNo = $('#branchNo').val();
 	});
 
 	result.always(function() {
+		$("#systemStr").val(PRICE_STR);
+		CKEDITOR.instances.systemStr.setData(PRICE_STR);
 	});
 }
 

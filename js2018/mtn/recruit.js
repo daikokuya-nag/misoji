@@ -3,14 +3,16 @@
 2016 Jan. 25 ver 1.0
 *************************/
 
-/***** 初期化 *****/
-jQuery(document).ready(function(){
-});
+var RECRUIT_STR;
 
-$(window).load(function(){
+/***** 初期化 *****/
+$(document).ready(function(){
 
 	/***** 求人内容データの読み込み *****/
 	getRecruitVal();
+});
+
+$(window).load(function(){
 });
 
 
@@ -20,6 +22,7 @@ $(window).load(function(){
 function getRecruitVal() {
 
 var result;
+var str;
 var branchNo = $('#branchNo').val();
 
 	result = $.ajax({
@@ -34,8 +37,7 @@ var branchNo = $('#branchNo').val();
 
 	result.done(function(response) {
 					//console.debug(response);
-
-		CKEDITOR.instances.recruitStr.setData(response);
+		RECRUIT_STR = response;
 	});
 
 	result.fail(function(result, textStatus, errorThrown) {
@@ -43,6 +45,8 @@ var branchNo = $('#branchNo').val();
 	});
 
 	result.always(function() {
+		$("#recruitStr").val(RECRUIT_STR);
+		CKEDITOR.instances.recruitStr.setData(RECRUIT_STR);
 	});
 }
 

@@ -35,4 +35,7 @@ CKEDITOR.editorConfig = function( config ) {
 
 	// Simplify the dialog windows.
 	config.removeDialogTabs = 'image:advanced;link:advanced';
+
+	// enterキーで<br>を挿入
+	config.enterMode = CKEDITOR.ENTER_BR;
 };

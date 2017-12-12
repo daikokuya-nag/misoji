@@ -166,7 +166,7 @@
 		?>
 	</div>
 
-	<div id="tabsSystem" class="tabArea NOTUSE">
+	<div id="tabsSystem" class="tabArea">
 		（料金表）
 		<textarea id="systemStr" name="systemStr" cols="60" rows="4"></textarea>
 		<script type="text/javascript">
@@ -180,7 +180,7 @@
 		<input type="button" value="反映" id="bldSystemInfo" onclick="writePriceVal();">	<!--  disabled="disabled" -->
 	</div>
 
-	<div id="tabsRecruit" class="tabArea NOTUSE">
+	<div id="tabsRecruit" class="tabArea">
 		（求人）
 		<textarea id="recruitStr" name="recruitStr" cols="60" rows="4"></textarea>
 		<script type="text/javascript">
@@ -773,10 +773,5 @@
 
 	<br class="clear">
 </div>
-
-
-
-
-
 </body>
 </html>
