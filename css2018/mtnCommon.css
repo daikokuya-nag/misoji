@@ -68,3 +68,22 @@ tr.NOTUSE {
 div.NOTUSE {
 	display:none;
 }
+
+span.required {
+	color:#ff0000;
+	font-weight:bold;
+}
+
+div.list {
+	float:left;
+	margin-right:10px;
+}
+
+div.list table {
+
+	border-collapse:collapse;
+}
+div.list td {
+
+	border:1px solid black;
+}

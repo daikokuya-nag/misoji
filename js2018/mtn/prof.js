@@ -5,7 +5,34 @@
 var CURR_AREA_NO = 0;
 
 /***** 初期化 *****/
-jQuery(document).ready(function(){
+$(document).ready(function(){
+
+	CKEDITOR.instances.mastComment.on("blur", function(e) {
+		CKEDITOR.instances.mastComment.updateElement();
+		var str = $("#mastComment").val();
+		var msg;
+
+		if(str.length >= 1) {
+			msg = '';
+		} else {
+			msg = 'any error';
+		}
+		$("#warnMastComment").html(msg);
+	});
+
+	CKEDITOR.instances.appComment.on("blur", function(e) {
+		CKEDITOR.instances.appComment.updateElement();
+		var str = $("#appComment").val();
+		var msg;
+
+		if(str.length >= 1) {
+			msg = '';
+		} else {
+			msg = 'any error';
+		}
+		$("#warnAppComment").html(msg);
+	});
+
 });
 
 $(window).load(function(){
@@ -20,10 +47,12 @@ $(window).load(function(){
 				text :"出力",
 				click:function() {
 					var chkEnter = checkProfEnter();
-					if(chkEnter.length <= 0) {
-						writeProfPreA();
+					if(chkEnter) {
+alert('OK');
+//						writeProfPreA();
 					} else {
-						alert(chkEnter);
+alert('any error');
+						//alert(chkEnter);
 					}
 				}
 			} ,
@@ -419,29 +448,7 @@ function writeProfOrder(profOrder) {
 					//console.debug(result);
 		}
 	});
-
 }
-
-
-/********************
-iframe内の画像ファイルのアップロード
-********************/
-function imgFileUpload() {
-
-var profDir = $('#profDir').val();
-var newProf = $('#newProf').val();
-
-			//console.debug('画像ファイルアップロード');
-
-//	if(newProf == 'new') {
-//		$('#seleImgFile').contents().find('#profDir').val(profDir);
-//	}
-//
-//			//window.frames[0].document.forms[0].submit();
-//	$('#seleImgFile').contents().find('#fileSelector').submit();
-}
-
-
 
 
 function setFileSeleVals(dir ,profData) {
@@ -565,83 +572,20 @@ function setShowProfDir(dir) {
 ********************/
 function checkProfEnter() {
 
-var newProf  = $('#newProf').val();
+var str;
+var ret = $("#enterProfile").parsley().validate();
 
-var groupNo  = $('#groupNo').val();
-var branchNo = $('#branchNo').val();
-
-var profDir  = $('#profDir' ).val();
-var profName = $('#profName').val();
-
-	/*** 出勤日/公休日 ***/
-/*var profWRSele = WRSele;*/
-
-		//var profWRDay = $('#profWRDay').val();
-
-var ret = '';
-var str = '';
-var chkIDStr = '';
-
-	if(newProf == 'edit') {
-		/***** 編集 *****/
-		if(profName.length <= 0) {
-			str = str + '・名前\n';
-		}
-
-				/*
-				if(profWRSele.length <= 0) {
-					str = str + '・出勤/公休の選択\n';
-				}
-				*/
-
-		if(str.length >= 1) {
-			ret = '以下の項目が未入力です\n' + str;
-		}
-	} else {
-		/***** 新規 *****/
-		if(profDir.length <= 0) {
-			/*** 識別子が未入力なら常にNG ***/
-			str = str + '・識別子\n';
-
-			if(profName.length <= 0) {
-				str = str + '・名前\n';
-			}
-
-					/*
-					if(profWRSele.length <= 0) {
-						str = str + '・出勤/公休の選択\n';
-					}
-					*/
-
-			if(str.length >= 1) {
-				ret = '以下の項目が未入力です\n' + str;
-			}
-		} else {
-			/*** 識別子に入力があるときは入力チェック ***/
-			chkIDStr = checkID(profDir);
-			if(chkIDStr.length <= 0) {
-				//識別子の入力OK
-				if(profName.length <= 0) {
-					str = str + '・名前\n';
-				}
-
-						/*
-						if(profWRSele.length <= 0) {
-							str = str + '・出勤/公休の選択\n';
-						}
-						*/
-
-				if(str.length >= 1) {
-					ret = '以下の項目が未入力です\n' + str;
-				}
-			} else {
-				//識別子の入力NG
-				ret = chkIDStr;
-			}
-		}
-
-	}
-
+//	CKEDITOR.instances.mastComment.updateElement();
+//	str = $("#mastComment").val();
+//	if(str.length <= 0) {
+//		ret = false;
+//	}
+//
+//	CKEDITOR.instances.appComment.updateElement();
+//	str = $("#appComment").val();
+//	if(str.length <= 0) {
+//		ret = false;
+//	}
 
 	return ret;
 }

@@ -10,6 +10,19 @@ $(document).ready(function(){
 
 	/***** 料金表データの読み込み *****/
 	getPriceVal();
+
+	CKEDITOR.instances.systemStr.on("blur", function(e) {
+		CKEDITOR.instances.systemStr.updateElement();
+		var str = $("#systemStr").val();
+		var msg;
+
+		if(str.length >= 1) {
+			msg = '';
+		} else {
+			msg = 'any error';
+		}
+		$("#warnSystemStr").html(msg);
+	});
 });
 
 $(window).load(function(){
@@ -59,26 +72,27 @@ var result;
 var branchNo = $('#branchNo').val();
 var str = CKEDITOR.instances.systemStr.getData();
 
-	result = $.ajax({
-		type : "post" ,
-		url  : "../cgi2018/ajax/mtn/writePriceVal.php" ,
-		data : {
-			branchNo : branchNo ,
-			str      : str
-		} ,
+	if(str.length >= 1) {
+		result = $.ajax({
+			type : "post" ,
+			url  : "../cgi2018/ajax/mtn/writePriceVal.php" ,
+			data : {
+				branchNo : branchNo ,
+				str      : str
+			} ,
 
-		cache : false
-	});
+			cache : false
+		});
 
-	result.done(function(response) {
-					//console.debug(response);
+		result.done(function(response) {
+						//console.debug(response);
+		});
 
-	});
+		result.fail(function(result, textStatus, errorThrown) {
+						console.debug('error at writePriceVal:' + result.status + ' ' + textStatus);
+		});
 
-	result.fail(function(result, textStatus, errorThrown) {
-					console.debug('error at writePriceVal:' + result.status + ' ' + textStatus);
-	});
-
-	result.always(function() {
-	});
+		result.always(function() {
+		});
+	}
 }
