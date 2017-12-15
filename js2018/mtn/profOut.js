@@ -209,7 +209,6 @@ var photoShow = $('input[name="photoUSE"]:checked').val();
 				//console.debug('photoShow:' + photoShow);
 	fd.append("photoShow" ,photoShow);
 
-
 	/***** 写真ファイル *****/
 	if($("#attF1").val() !== '') {
 		fd.append("attF1", $("#attF1").prop("files")[0]);
@@ -230,9 +229,9 @@ var photoShow = $('input[name="photoUSE"]:checked').val();
 	if($("#attTN").val() !== '') {
 		fd.append("attTN", $("#attTN").prop("files")[0]);
 	}
-	if($("#attML").val() !== '') {
-		fd.append("attML", $("#attML").prop("files")[0]);
-	}
+//	if($("#attML").val() !== '') {
+//		fd.append("attML", $("#attML").prop("files")[0]);
+//	}
 
 	/***** 週間出勤表 *****/
 var idF;

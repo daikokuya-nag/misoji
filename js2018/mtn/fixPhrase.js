@@ -4,6 +4,23 @@
 *************************/
 
 /***** 初期化 *****/
+$(document).ready(function(){
+
+	CKEDITOR.instances.fixPhraseStr.on("blur", function(e) {
+		CKEDITOR.instances.fixPhraseStr.updateElement();
+		var str = $("#fixPhraseStr").val();
+		var msg;
+
+		if(str.length >= 1) {
+			msg = '';
+		} else {
+			msg = 'any error';
+		}
+		$("#warnFixPhraseStr").html(msg);
+	});
+});
+
+
 $(window).load(function(){
 
 	$("#editFixPhrase").dialog({
@@ -54,6 +71,8 @@ var result;
 					console.debug('本文:' + phraseData);
 		$("#fixPhraseStr").val(phraseData);
 		CKEDITOR.instances.fixPhraseStr.setData(phraseData);
+		$("#warnFixPhraseStr").html('');
+
 		$("#editFixPhrase").dialog("open");
 	});
 
@@ -75,27 +94,29 @@ var branchNo  = $('#branchNo').val();
 var phraseStr = CKEDITOR.instances.fixPhraseStr.getData();
 var result;
 
-	result = $.ajax({
-		type : "post" ,
-		url  : "../cgi2018/ajax/mtn/writeFixPhrase.php" ,
-		data : {
-			branchNo  : branchNo ,
-			phraseStr : phraseStr
-		} ,
+	if(phraseStr.length >= 1) {
+		result = $.ajax({
+			type : "post" ,
+			url  : "../cgi2018/ajax/mtn/writeFixPhrase.php" ,
+			data : {
+				branchNo  : branchNo ,
+				phraseStr : phraseStr
+			} ,
 
-		cache : false
-	});
+			cache : false
+		});
 
-	result.done(function(response) {
-					//console.debug(response);
-		alert('定型文出力完了');
-		$("#editFixPhrase").dialog("close");
-	});
+		result.done(function(response) {
+						//console.debug(response);
+			alert('定型文出力完了');
+			$("#editFixPhrase").dialog("close");
+		});
 
-	result.fail(function(result, textStatus, errorThrown) {
-			console.debug('error at writeFixPhrase:' + result.status + ' ' + textStatus);
-	});
+		result.fail(function(result, textStatus, errorThrown) {
+				console.debug('error at writeFixPhrase:' + result.status + ' ' + textStatus);
+		});
 
-	result.always(function() {
-	});
+		result.always(function() {
+		});
+	}
 }

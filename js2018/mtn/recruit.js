@@ -10,6 +10,19 @@ $(document).ready(function(){
 
 	/***** 求人内容データの読み込み *****/
 	getRecruitVal();
+
+	CKEDITOR.instances.recruitStr.on("blur", function(e) {
+		CKEDITOR.instances.recruitStr.updateElement();
+		var str = $("#recruitStr").val();
+		var msg;
+
+		if(str.length >= 1) {
+			msg = '';
+		} else {
+			msg = 'any error';
+		}
+		$("#warnRecruitStr").html(msg);
+	});
 });
 
 $(window).load(function(){
@@ -59,26 +72,27 @@ var result;
 var branchNo = $('#branchNo').val();
 var str = CKEDITOR.instances.recruitStr.getData();
 
-	result = $.ajax({
-		type : "post" ,
-		url  : "../cgi2018/ajax/mtn/writeRecruitVal.php" ,
-		data : {
-			branchNo : branchNo ,
-			str      : str
-		} ,
+	if(str.length >= 1) {
+		result = $.ajax({
+			type : "post" ,
+			url  : "../cgi2018/ajax/mtn/writeRecruitVal.php" ,
+			data : {
+				branchNo : branchNo ,
+				str      : str
+			} ,
 
-		cache : false
-	});
+			cache : false
+		});
 
-	result.done(function(response) {
-					//console.debug(response);
+		result.done(function(response) {
+						//console.debug(response);
+		});
 
-	});
+		result.fail(function(result, textStatus, errorThrown) {
+						console.debug('error at writeRecruitVal:' + result.status + ' ' + textStatus);
+		});
 
-	result.fail(function(result, textStatus, errorThrown) {
-					console.debug('error at writeRecruitVal:' + result.status + ' ' + textStatus);
-	});
-
-	result.always(function() {
-	});
+		result.always(function() {
+		});
+	}
 }
