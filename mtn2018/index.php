@@ -137,63 +137,100 @@
 	<!-- ***** タブの中身の定義 ***** -->
 	<!-- ニュース -->
 	<div id="tabsNews" class="tabArea">
-		<input type="button" value="新規ニュース" onclick="newNews()">&nbsp;&nbsp;
-		<input type="button" value="定型文編集" onclick="editFixPhrase()">
-		<br><br>
-		<table id="newsList">
-			<thead id="newsListH"></thead>
-			<tbody id="newsListD"></tbody>
-		</table>
-		<hr>
-		<input type="button" value="表示可否反映" id="bldNewsList" onclick="updNewsDisp();" disabled="disabled">
+
+		<div id="tabNewsTop">
+			<input type="button" value="新規ニュース" onclick="newNews()">&nbsp;&nbsp;
+			<input type="button" value="定型文編集" onclick="editFixPhrase()">
+			<br><br>
+		</div>
+
+		<div id="tabNewsMid" class="tabMid">
+			<table id="newsList">
+				<thead id="newsListH"></thead>
+				<tbody id="newsListD"></tbody>
+			</table>
+		</div>
+
+		<div id="tabNewsBottom" class="tabBottomBtn">
+			<hr>
+			<input type="button" value="表示可否反映" id="bldNewsList" onclick="updNewsDisp();" disabled="disabled">
+		</div>
 	</div>
 
+	<!-- プロファイル -->
 	<div id="tabsProfile" class="tabArea">
-		<input type="button" value="新規プロファイル" onclick="newProf()"><br><br>
-		<div id="profSeqListD"></div>
-		<hr>
-		<input type="button" value="表示順反映" id="bldProfList" onclick="updProfSeqPre();" disabled="disabled">
-		<?php
-			if(strcmp($mtn ,'Y') == 0) {
-				print('&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="全プロファイル一括更新" id="rebldAllProf" onclick="updAllProf();">');
-			}
-		?>
+
+		<div id="tabProfTop">
+			<input type="button" value="新規プロファイル" onclick="newProf()"><br><br>
+		</div>
+
+		<div id="tabProfMid" class="tabMid">
+			<div id="profSeqListD"></div>
+		</div>
+
+		<div id="tabProfBottom" class="tabBottomBtn">
+			<hr>
+			<input type="button" value="表示順反映" id="bldProfList" onclick="updProfSeqPre();" disabled="disabled">
+			<?php
+				if(strcmp($mtn ,'Y') == 0) {
+					print('&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="全プロファイル一括更新" id="rebldAllProf" onclick="updAllProf();">');
+				}
+			?>
+		</div>
 	</div>
 
 	<div id="tabsSystem" class="tabArea">
-		システム内容<span class="required">*</span>
-		<textarea id="systemStr" name="systemStr" cols="60" rows="4"></textarea>
-		<script type="text/javascript">
-			CKEDITOR.replace('systemStr' ,
-				{
-					height : 120
-					//skin : 'office2003'
-				});
-		</script>
-		<div id="warnSystemStr" class="parsley-errors-list filled"></div>
-		<hr>
-		<input type="button" value="出力" id="bldSystemInfo" onclick="writePriceVal();">	<!--  disabled="disabled" -->
+		<div id="tabSystemTop">
+			システム内容<span class="required">*</span>
+		</div>
+
+		<div id="tabSystemMid" class="tabMid">
+			<textarea id="systemStr" name="systemStr" cols="60" rows="4"></textarea>
+			<script type="text/javascript">
+				CKEDITOR.replace('systemStr' ,
+					{
+						height : 120
+						//skin : 'office2003'
+					});
+			</script>
+			<div id="warnSystemStr" class="parsley-errors-list filled"></div>
+		</div>
+
+		<div id="tabSystemBottom" class="tabBottomBtn">
+			<hr>
+			<input type="button" value="出力" id="bldSystemInfo" onclick="writePriceVal();">	<!--  disabled="disabled" -->
+		</div>
 	</div>
 
 	<div id="tabsRecruit" class="tabArea">
-		求人内容<span class="required">*</span>
-		<textarea id="recruitStr" name="recruitStr" cols="60" rows="4"></textarea>
-		<script type="text/javascript">
-			CKEDITOR.replace('recruitStr' ,
-				{
-					height : 120
-					//skin : 'office2003'
-				});
-		</script>
-		<div id="warnRecruitStr" class="parsley-errors-list filled"></div>
-		<hr>
-		<input type="button" value="出力" id="bldRecruitInfo" onclick="writeRecruitVal();">	<!--  disabled="disabled" -->
+		<div id="tabRecruitTop">
+			求人内容<span class="required">*</span>
+		</div>
+
+		<div id="tabSystemMid" class="tabMid">
+			<textarea id="recruitStr" name="recruitStr" cols="60" rows="4"></textarea>
+			<script type="text/javascript">
+				CKEDITOR.replace('recruitStr' ,
+					{
+						height : 120
+						//skin : 'office2003'
+					});
+			</script>
+			<div id="warnRecruitStr" class="parsley-errors-list filled"></div>
+		</div>
+
+		<div id="tabRecruitBottom" class="tabBottomBtn">
+			<hr>
+			<input type="button" value="出力" id="bldRecruitInfo" onclick="writeRecruitVal();">	<!--  disabled="disabled" -->
+		</div>
 	</div>
 
 	<div id="tabsTop" class="tabArea NOTUSE">
 		（とっぷ）
-		<hr>
-		<input type="button" value="出力" id="bldTopInfo" onclick="updTopInfo();" disabled="disabled">
+		<div id="topReflect" class="tabBottomBtn">
+			<hr>
+			<input type="button" value="出力" id="bldTopInfo" onclick="updTopInfo();" disabled="disabled">
+		</div>
 	</div>
 
 
