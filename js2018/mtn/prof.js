@@ -35,6 +35,12 @@ $(document).ready(function(){
 
 });
 
+/***** 表示順のドロップ時の動作 *****/
+$(document).on('sortstop' ,'#profSeqListD' ,function(){
+
+	$("#bldProfList").prop('disabled' ,false);
+});
+
 $(window).load(function(){
 
 	/***** 編集ダイアログの定義 *****/
@@ -69,6 +75,7 @@ alert('any error');
 	getProfileList();
 });
 
+
 /********************
 プロファイルリストの読み込み
 ********************/
@@ -90,29 +97,14 @@ var result;
 	});
 
 	result.done(function(response) {
-					//console.debug(response);
+					console.debug(response);
 
-		$("#profSeqListH").html(response['SEQ']['title']);
+				//$("#profSeqListH").html(response['SEQ']['title']);
 		$("#profSeqListD").html(response['SEQ']['data']);
 		$(".dispProfSW").toggleSwitch();
 
 		/***** プロファイル表示順 *****/
-		$("#profSeqList").tableDnD({
-
-			onDragClass : "whileDrag" ,	//ドラッグ中の印
-
-			onDrop: function(table, row) {
-				profOrder = $.tableDnD.serialize();
-						console.debug(profOrder);
-							//writeProfOrder(profOrder);
-				enableWriteProfSeq();
-			}
-		});
-
-				/*
-				$("#profListD").html(ret['FORNEWS']['data']);
-				$("#profListFPD").html(ret['FORNEWS']['data']);
-				*/
+		$("#profSeqListD").sortable();
 	});
 
 	result.fail(function(result, textStatus, errorThrown) {
@@ -413,6 +405,192 @@ console.debug(currID + ' ' + newID);
 	CURR_AREA_NO = newAreaNo;
 			console.debug('更新後:' + CURR_AREA_NO);
 }
+
+
+
+
+/********************
+表示順、表示/非表示更新時の出力
+********************/
+function updProfSeqPre() {
+
+var result = getSess();
+
+	result.done(function(response) {
+					//console.debug(response);
+		if(response == SESS_OWN_INTIME) {
+				writeProfSeqPreA();
+		} else {
+				alert('長時間操作がなかったため接続が切れました。ログインしなおしてください。');
+//				location.href = 'login.html';
+		}
+	});
+
+	result.fail(function(result, textStatus, errorThrown) {
+			console.debug('error at updProfSeqPre:' + result.status + ' ' + textStatus);
+	});
+
+	result.always(function() {
+	});
+}
+
+/********************
+セッション情報の更新
+********************/
+function writeProfSeqPreA() {
+
+var result = updSess();
+
+	result.done(function(response) {
+					//console.debug(response);
+		writeProfSeqDisp();
+	});
+
+	result.fail(function(result, textStatus, errorThrown) {
+			console.debug('error at writeProfSeqPreA:' + result.status + ' ' + textStatus);
+	});
+
+	result.always(function() {
+	});
+}
+
+/********************
+表示順を出力
+********************/
+function writeProfSeqDisp() {
+
+var branchNo  = $('#branchNo').val();
+var dispSW    = $(".dispProfSW").serialize();
+var profOrder = $("#profSeqListD").sortable('serialize');
+
+var sendData;
+
+	sendData = profOrder + '&branchNo=' + branchNo
+
+console.debug(sendData);
+
+//var result;
+//
+//	result = $.ajax({
+//		type : "post" ,
+//		url  : "cgi/ajax/writeProfSeqDisp.php" ,
+//					//		data : profOrder ,		// see commonA.js
+//
+//		data : {
+//			groupNo  : groupNo  ,
+//			branchNo : branchNo ,
+//			dispSW   : dispSW   ,
+//			order    : profOrder
+//		} ,
+//
+//		cache : false
+//	};
+//
+//
+//	result.done(function(response) {
+//					//console.debug(response);
+//
+////		showProfListAll();		//リスト再表示
+////		bldProfListHTML(bld);	//アルバムページ再出力
+////		bldProfSitemap();
+//	});
+//
+//	result.fail(function(result, textStatus, errorThrown) {
+//			console.debug('error at writeProfSeqDisp:' + result.status + ' ' + textStatus);
+//	});
+//
+//	result.always(function() {
+//	});
+}
+
+/********************
+リスト再表示
+********************/
+function showProfListAll() {
+
+var groupNo  = $('#groupNo').val();
+var profListTag;
+
+	$.ajax({
+		type : "get" ,
+		url  : "cgi/ajax/bldProfList.php" ,
+		data : {
+			groupNo  : groupNo  ,
+			branchNo : branchNo
+		} ,
+
+		cache    : false  ,
+		dataType : 'json' ,
+
+		success : function(result) {
+					console.debug(result);
+			profListTag = result;
+					//console.debug(ret['TITLE']);
+		} ,
+
+		error : function(result) {
+					console.debug('error at showList:' + result);
+		} ,
+
+		complete : function(result) {
+					//alert(newTag['data']);
+			/*** ニュース埋め込み用 ***/
+			$("#profListD").html(profListTag['news']['data']);
+
+			/*** 定型文埋め込み用 ***/
+			$("#profListFPD").html(profListTag['news']['data']);
+
+			/*** プロファイルリスト ***/
+			$("#profSeqListD").html(profListTag['prof']['data']);
+
+			$("#profSeqList").tableDnD({
+				onDrop: function(table, row) {
+									//profOrder = $.tableDnD.serialize();
+									//		console.debug(profOrder);
+									//enableWriteProfSeq();
+				}
+			});
+
+			$(".dispProfSW").toggleSwitch();
+		}
+	});
+
+}
+
+/********************
+アルバムHTML、JSのファイル出力
+********************/
+function bldProfListHTML(bld) {
+
+var groupNo  = $('#groupNo').val();
+var branchNo = $('#branchNo').val();
+
+	$.ajax({
+		type :"post" ,
+		url  :"cgi/ajax/bldProfHTML.php" ,
+		data : {
+			groupNo  : groupNo  ,
+			branchNo : branchNo ,
+			bld      : bld      ,
+			profDir  : ''
+		} ,
+
+		cache    :false ,
+//		dataType :'json' ,
+
+		success :function(result) {
+					console.debug(result);
+			ret = result;
+					//console.debug(ret['TITLE']);
+		} ,
+
+		error :function(result) {
+					console.debug('error at bldProfListHTML:' + result);
+		}
+	});
+}
+
+
 
 
 /*******************************************************************************/
@@ -985,22 +1163,6 @@ function updProf(groupNo ,branchNo ,profDir) {
 
 
 /***********************************************************************************************************************/
-/********************
-表示順、表示/非表示更新時の出力
-********************/
-function updProfSeq() {
-
-	updProfSeqPre();
-}
-
-
-/********************
-表示順、表示/非表示更新時の出力
-********************/
-function updProfSeq2() {
-
-	updProfSeqPre2();
-}
 
 
 
@@ -1009,21 +1171,6 @@ function updProfSeq2() {
 
 
 
-/********************
-「表示順反映」ボタンの有効化
-********************/
-function enableWriteProfSeq() {
-
-	$("#bldProfList").prop('disabled' ,false);
-}
-
-/********************
-「表示順反映」ボタンの有効化
-********************/
-function enableWriteProfSeq2() {
-
-	$("#bldProfList2").prop('disabled' ,false);
-}
 
 
 /********************
