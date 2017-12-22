@@ -38,7 +38,7 @@ $(document).ready(function(){
 /***** 表示順のドロップ時の動作 *****/
 $(document).on('sortstop' ,'#profSeqListD' ,function(){
 
-	$("#bldProfList").prop('disabled' ,false);
+	enableWriteProfSeq();
 });
 
 $(window).load(function(){
@@ -84,7 +84,6 @@ function getProfileList() {
 var branchNo = $('#branchNo').val();
 var result;
 
-
 	result = $.ajax({
 		type : "get" ,
 		url  : "../cgi2018/ajax/mtn/getProfileList.php" ,
@@ -115,6 +114,10 @@ var result;
 	});
 }
 
+function enableWriteProfSeq() {
+
+	$("#bldProfList").prop('disabled' ,false);
+}
 
 /********************************************************************************/
 /********************
@@ -465,42 +468,35 @@ var profOrder = $("#profSeqListD").sortable('serialize');
 
 var sendData;
 
-	sendData = profOrder + '&branchNo=' + branchNo
+	sendData = profOrder + '&branchNo=' + branchNo + '&' + dispSW;
+					console.debug(sendData);
 
-console.debug(sendData);
+var result;
 
-//var result;
-//
-//	result = $.ajax({
-//		type : "post" ,
-//		url  : "cgi/ajax/writeProfSeqDisp.php" ,
-//					//		data : profOrder ,		// see commonA.js
-//
-//		data : {
-//			groupNo  : groupNo  ,
-//			branchNo : branchNo ,
-//			dispSW   : dispSW   ,
-//			order    : profOrder
-//		} ,
-//
-//		cache : false
-//	};
-//
-//
-//	result.done(function(response) {
-//					//console.debug(response);
-//
-////		showProfListAll();		//リスト再表示
-////		bldProfListHTML(bld);	//アルバムページ再出力
-////		bldProfSitemap();
-//	});
-//
-//	result.fail(function(result, textStatus, errorThrown) {
-//			console.debug('error at writeProfSeqDisp:' + result.status + ' ' + textStatus);
-//	});
-//
-//	result.always(function() {
-//	});
+	result = $.ajax({
+		type : "post" ,
+		url  : "../cgi2018/ajax/mtn/writeProfSeqDisp.php" ,
+					//		data : profOrder ,		// see commonA.js
+
+		data  : sendData ,
+		cache : false
+	});
+
+
+	result.done(function(response) {
+					console.debug(response);
+
+//		showProfListAll();		//リスト再表示
+//		bldProfListHTML(bld);	//アルバムページ再出力
+//		bldProfSitemap();
+	});
+
+	result.fail(function(result, textStatus, errorThrown) {
+			console.debug('error at writeProfSeqDisp:' + result.status + ' ' + textStatus);
+	});
+
+	result.always(function() {
+	});
 }
 
 /********************
