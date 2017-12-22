@@ -163,10 +163,7 @@
 		</div>
 
 		<div id="tabProfMid" class="tabMid">
-			<table id="profSeqList">
-				<thead id="profSeqListH"></thead>
-				<tbody id="profSeqListD"></tbody>
-			</table>
+			<div id="profSeqListD"></div>
 		</div>
 
 		<div id="tabProfBottom" class="tabBottomBtn">
