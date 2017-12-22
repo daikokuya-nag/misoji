@@ -87,3 +87,15 @@ div.list td {
 
 	border:1px solid black;
 }
+
+
+div.tabBottomBtn {
+
+	position: absolute;
+	bottom: 10px;
+}
+
+div.tabMid {
+
+	overflow:auto;
+}
