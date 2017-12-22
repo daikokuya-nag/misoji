@@ -375,14 +375,6 @@ div#showBArea {
 	float:right;
 }
 
-div.resetFloat:after {
-	content: ".";
-	display: block;
-	height: 0;
-	clear: both;
-	visibility: hidden;
-}
-
 
 /***** 入力エリア表示ボタン *****/
 div.showAreaBtn {

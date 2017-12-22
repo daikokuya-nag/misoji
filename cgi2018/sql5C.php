@@ -648,5 +648,53 @@ class sql5C {
 	function freeResult($result) {
 		return mysql_free_result($result);
 	}
+
+
+/**
+ * オートインクリメントのリセット
+ *
+ * @param string $table    テーブル名
+ * @param int    $printLog ログファイル出力の有無
+ * @return bool 成功時はtrue、エラー時はfalse
+ */
+	public function resetAutoInc($table ,$printLog=self::LOG_DEFAULT) {
+
+		$sqlStr = 'ALTER TABLE ' . $table . ' AUTO_INCREMENT = 1';
+		$result = $this->execute($sqlStr ,$printLog);
+
+		if($result[self::EXECUTE_RESULT]) {
+			$result = true;
+		} else {
+			$result = false;
+		}
+
+		return $result;
+	}
+
+
+/**
+ * 直前のauto incrementの値
+ *
+ * @param string $table    テーブル名
+ * @param int    $printLog ログファイル出力の有無
+ * @return int auto incrementの値、エラー時は0
+ */
+	public function getLastInsertID($table ,$printLog=self::LOG_DEFAULT) {
+
+					/* $sqlStr = 'select last_insert_id() from ' . $table; */
+		$sqlStr = 'select last_insert_id()';
+		$result = $this->execute($sqlStr ,$printLog);
+
+		$ret = 0;
+		if($result[self::EXECUTE_RESULT]) {
+			$execResult = $result[self::EXECUTE_RESULT];
+			$fetchRow = mysql_fetch_row($execResult);
+			$ret = $fetchRow[0];
+
+			$this->freeResult($execResult);
+		}
+
+		return $ret;
+	}
 }
 ?>
