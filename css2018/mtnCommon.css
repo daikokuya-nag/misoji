@@ -47,8 +47,6 @@ body{
 	position: absolute;
 }
 
-
-
 div#divLogout {
 	float:left;
 }
@@ -86,4 +84,36 @@ div.list table {
 div.list td {
 
 	border:1px solid black;
+}
+
+
+div.tabBottomBtn {
+
+	position: absolute;
+	bottom: 10px;
+}
+
+div.tabMid {
+
+	overflow:auto;
+}
+
+
+div#imgList .img {
+
+	float:left;
+}
+
+div.imgList {
+
+	overflow:auto;
+	height:190px;
+}
+
+div.resetFloat:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
 }

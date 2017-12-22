@@ -100,6 +100,7 @@
 
 <script src="../js2018/mtn/system.js?<?php print $vesion; ?>"></script>
 <script src="../js2018/mtn/recruit.js?<?php print $vesion; ?>"></script>
+<script src="../js2018/mtn/top.js?<?php print $vesion; ?>"></script>
 
 <!--
 <script src="../js2018/mtn/profSeq.js?<?php print $vesion; ?>"></script>
@@ -124,14 +125,11 @@
 
 <div id="tabA">
 	<ul>
+		<li><a href="#tabsTop">TOP</a></li>
 		<li><a href="#tabsProfile">プロファイル</a></li>
 		<li><a href="#tabsNews">ニュース</a></li>
 		<li><a href="#tabsRecruit">求人</a></li>
 		<li><a href="#tabsSystem">システム</a></li>
-
-<!--
-		<li><a href="#tabsTop">とっぷ</a></li>
--->
 	</ul>
 
 	<!-- ***** タブの中身の定義 ***** -->
@@ -179,6 +177,7 @@
 		</div>
 	</div>
 
+	<!-- システム -->
 	<div id="tabsSystem" class="tabArea">
 		<div id="tabSystemTop">
 			システム内容<span class="required">*</span>
@@ -202,6 +201,7 @@
 		</div>
 	</div>
 
+	<!-- 求人 -->
 	<div id="tabsRecruit" class="tabArea">
 		<div id="tabRecruitTop">
 			求人内容<span class="required">*</span>
@@ -225,11 +225,52 @@
 		</div>
 	</div>
 
-	<div id="tabsTop" class="tabArea NOTUSE">
-		（とっぷ）
-		<div id="topReflect" class="tabBottomBtn">
+	<!-- トップ -->
+	<div id="tabsTop" class="tabArea">
+		<div id="tabTopTop">
+			（とっぷ）
+		</div>
+
+		<div id="tabTopMid" class="tabMid">
+			<table class="topImgSele">
+				<thead>
+					<tr>
+						<th class="topImgTN" colspan="2">画像ファイル</th>
+						<th class="topImgDisp">表示</th>
+					</tr>
+				</thead>
+				<tbody id="topImgList">
+					<tr id="topImg-A">
+						<td class="topImgTN" id="topImgTNA">aaa</td>
+						<td class="topImgSele"><input type="button" value="画像選択" name="attTopImgA" id="attTopImgA" onclick="showSeleImg('TOP_HEADER' ,'A')"><br><div id="currTopImgA">&nbsp;</div></td>
+						<td class="topImgDisp"><input type="checkbox" name="useTopImgA" id="useTopImgA" class="useTopImg" value="U"></td>
+					</tr>
+					<tr id="topImg-B">
+						<td class="topImgTN" id="topImgTNB">aaa</td>
+						<td class="topImgSele"><input type="button" value="画像選択" name="attTopImgB" id="attTopImgB" onclick="showSeleImg('TOP_HEADER' ,'B')"><br><div id="currTopImgB">&nbsp;</div></td>
+						<td class="topImgDisp"><input type="checkbox" name="useTopImgB" id="useTopImgB" class="useTopImg" value="U"></td>
+					</tr>
+					<tr id="topImg-C">
+						<td class="topImgTN" id="topImgTNC">aaa</td>
+						<td class="topImgSele"><input type="button" value="画像選択" name="attTopImgC" id="attTopImgC" onclick="showSeleImg('TOP_HEADER' ,'C')"><br><div id="currTopImgC">&nbsp;</div></td>
+						<td class="topImgDisp"><input type="checkbox" name="useTopImgC" id="useTopImgC" class="useTopImg" value="U"></td>
+					</tr>
+					<tr id="topImg-D">
+						<td class="topImgTN" id="topImgTND">aaa</td>
+						<td class="topImgSele"><input type="button" value="画像選択" name="attTopImgD" id="attTopImgD" onclick="showSeleImg('TOP_HEADER' ,'D')"><br><div id="currTopImgD">&nbsp;</div></td>
+						<td class="topImgDisp"><input type="checkbox" name="useTopImgD" id="useTopImgD" class="useTopImg" value="U"></td>
+					</tr>
+				</tbody>
+			</table>
+			<input type="hidden" id="topImgA" value="">
+			<input type="hidden" id="topImgB" value="">
+			<input type="hidden" id="topImgC" value="">
+			<input type="hidden" id="topImgD" value="">
+		</div>
+
+		<div id="tabTopBottom" class="tabBottomBtn">
 			<hr>
-			<input type="button" value="出力" id="bldTopInfo" onclick="updTopInfo();" disabled="disabled">
+			<input type="button" value="出力" id="bldTopImgDispSeq" onclick="updTopImgSeqPre();" disabled="disabled">
 		</div>
 	</div>
 
@@ -684,6 +725,23 @@
 				<input type="button" value="&nbsp;キャンセル&nbsp;" onclick="hideDelDir();">
 			</div>
 		</div>
+	</div>
+</div>
+
+
+
+<!-- --------------------------------------------------------------------------- -->
+<!-- --画像選択--------------------------------------------------------------- -->
+<input type="hidden" name="imgClass" id="imgClass" value="">
+<input type="hidden" name="imgParam1" id="imgParam1" value="">
+<div id="selectImgFile" title="画像選択">
+	<div id="imgList" class="imgList resetFloat"></div>
+	<input type="button" value="新規画像" onclick="seleNewImg();">
+	<div id="seleNewImg">
+		<hr>
+		<input type="file" name="imgFileSele" id="imgFileSele"><br>
+		タイトル：<input type="text" name="imgTitle" id="imgTitle"><br>
+		<input type="button" value="追加" id="addNewImgBtn" onclick="addNewImg();" disabled="disabled">
 	</div>
 </div>
 
