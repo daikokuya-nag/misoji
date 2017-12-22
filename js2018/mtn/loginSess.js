@@ -9,96 +9,106 @@ jQuery(document).ready(function(){
 $(window).load(function(){
 
 	$("body").keypress(function(e){
-		if(e.which == 13){
-			$("#goLogin").click();
+		if(e.which == 13) {
+			login();
 		}
 	});
+
+	init();
 });
 
+function init() {
+
+var sess;
+var msg = '';
+var result;
+
+	result = getSess();
+
+	result.done(function(response) {
+					//console.debug(response);
+		sess = response;
+	});
+
+	result.fail(function(result, textStatus, errorThrown) {
+					console.debug('error at login:' + result.status + ' ' + textStatus);
+	});
+
+	result.always(function() {
+		if(sess == SESS_OTHER_INTIME) {
+			/* 他IDでログイン中　「他でログイン中」のダイアログ、ログイン不可 */
+							console.debug('他ID ログイン中');
+			msg = '他の端末からログインしているため、この端末からはログインできません。';
+		}
+		$("#msg").html(msg);
+	});
+}
 
 function login() {
 
 var sess;
 var goLogin = 0;
+var result;
 
-	$.ajax({
-		type  : "get" ,
-		url   : "../cgi2018/ajax/mtn/getSess.php" ,
-		cache : false ,
+	result = getSess();
 
-		success : function(result) {
-					console.debug(result);
-			sess = result;
-		} ,
+	result.done(function(response) {
+					//console.debug(response);
+		sess = response;
+	});
 
-		error : function(result) {
-					console.debug('error at login:' + result);
-		} ,
+	result.fail(function(result, textStatus, errorThrown) {
+					console.debug('error at login:' + result.status + ' ' + textStatus);
+	});
 
-		complete : function(result) {
-			loginA(sess);
+	result.always(function() {
+		if(sess == SESS_NO_ID) {
+			/* セッションデータナシ　ログイン判定へ */
+						console.debug('セッションファイルナシ');
+			goLogin = 2;
+		}
+
+		if(sess == SESS_OWN_TIMEOUT) {
+			/* 自IDでタイムアウト　ログイン判定へ */
+							console.debug('自ID タイムアウト');
+			goLogin = 2;
+		}
+
+		if(sess == SESS_OTHER_TIMEOUT) {
+			/* 他IDでタイムアウト　ログイン判定へ */
+							console.debug('他ID タイムアウト');
+			goLogin = 2;
+		}
+
+		if(sess == SESS_OWN_INTIME) {
+			/* 自IDでログイン中　ログイン判定へ */
+							console.debug('自ID ログイン中');
+			goLogin = 2;
+		}
+
+		if(sess == SESS_OTHER_INTIME) {
+			/* 他IDでログイン中　「他でログイン中」のダイアログ、ログイン不可 */
+							console.debug('他ID ログイン中');
+			alert('他の端末からログインしているため、この端末からはログインできません。');
+		}
+
+
+		if(goLogin == 2) {
+			//ログイン判定へ
+			loginMain();
 		}
 	});
 }
 
-
-function loginA(sess) {
-
-	if(sess == SESS_NO_ID) {
-		/* セッションデータナシ　ログイン画面へ */
-					console.debug('セッションファイルナシ');
-		goLogin = 1;
-	}
-
-	if(sess == SESS_OWN_TIMEOUT) {
-		/* 自IDでタイムアウト　タイムアウトのダイアログ、ログイン画面へ */
-						console.debug('自ID タイムアウト');
-		goLogin = 1;
-	}
-
-	if(sess == SESS_OTHER_TIMEOUT) {
-		/* 他IDでタイムアウト　ログイン画面へ */
-						console.debug('他ID タイムアウト');
-		goLogin = 1;
-	}
-
-	if(sess == SESS_OWN_INTIME) {
-		/* 自IDでログイン中　メンテ画面へ */
-						console.debug('自ID ログイン中');
-		goLogin = 2;
-	}
-
-	if(sess == SESS_OTHER_INTIME) {
-		/* 他IDでログイン中　「他でログイン中」のダイアログ、ログイン不可 */
-						console.debug('他ID ログイン中');
-		alert('他の端末からログインしているため、この端末からはログインできません。');
-		goLogin = 1;
-	}
-
-
-	if(goLogin == 1) {
-		//ログイン画面へ
-		loginMain();
-	}
-
-	if(goLogin == 2) {
-		location.href = 'index.php';
-	}
-}
-
-
 function loginMain() {
-
-			console.debug('loginMain');
 
 var id2 = $('#id2').val();
 
 var branchNo = $('#branchNo').val();
+var mtnMode  = '';
+var result;
 
-var retGroupNo = '';
-var mtnMode    = '';
-
-	$.ajax({
+	result = $.ajax({
 		type : "get" ,
 		url  : "../cgi2018/ajax/mtn/login.php" ,
 		data : {
@@ -106,49 +116,22 @@ var mtnMode    = '';
 			branchNo : branchNo
 		} ,
 
-		cache : false ,
+		cache    : false  ,
+		dataType : 'json'
+	});
 
-		success : function(result) {
-					console.debug('ret' + result + '*');
-			retGroupNo = result['GROUPNO'];
-					console.debug(retGroupNo + '*');
-		} ,
-
-		error : function(result) {
-					console.debug('error at login:' + result);
-		} ,
-
-		complete : function(result) {
-			updSess(retGroupNo);
+	result.done(function(response) {
+					console.debug(response);
+		if(response['BRANCHNO'].length >= 1) {
+			updSess();
+			location.href = 'index.php';
 		}
 	});
 
-}
+	result.fail(function(result, textStatus, errorThrown) {
+					console.debug('error at loginMain:' + result.status + ' ' + textStatus);
+	});
 
-function updSess(groupNo) {
-
-			console.debug('updSess');
-
-var ret;
-
-	$.ajax({
-		type  : "get" ,
-		url   : "../cgi2018/ajax/mtn/updSess.php" ,
-		cache : false ,
-
-		success : function(result) {
-					console.debug(result);
-			ret = result;
-		} ,
-
-		error : function(result) {
-					console.debug('error at updSess:' + result);
-		} ,
-
-		complete : function(result) {
-			if(groupNo.length >= 1) {
-				location.href = 'index.php';
-			}
-		}
+	result.always(function() {
 	});
 }

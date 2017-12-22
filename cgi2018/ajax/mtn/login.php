@@ -4,7 +4,7 @@
 PHP5
 2016 Mar. 3 ver 1.0
 ********************/
-session_start();
+	session_start();
 
 	$id2      = $_REQUEST['id2'];
 	$branchNo = $_REQUEST['branchNo'];	/* 店No */

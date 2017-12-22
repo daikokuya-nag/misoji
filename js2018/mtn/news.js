@@ -8,10 +8,39 @@ var RESP_NEWS_DISP = false;	//「表示可否反映」ボタンの有効/無効
 var NEWS_NO_LIST;			//ニュースNoのリスト
 
 /***** 初期化 *****/
-jQuery(document).ready(function(){
+$(document).ready(function(){
+
+	CKEDITOR.instances.digest.on("blur", function(e) {
+		CKEDITOR.instances.digest.updateElement();
+		var str = $("#digest").val();
+		var msg;
+
+		if(str.length >= 1) {
+			msg = '';
+		} else {
+			msg = 'any error';
+		}
+		$("#warnDigest").html(msg);
+	});
+
+	CKEDITOR.instances.content.on("blur", function(e) {
+		CKEDITOR.instances.content.updateElement();
+		var str = $("#content").val();
+		var msg;
+
+		if(str.length >= 1) {
+			msg = '';
+		} else {
+			msg = 'any error';
+		}
+		$("#warnContent").html(msg);
+	});
 });
 
+
 $(window).load(function(){
+
+	$("#warnDigest").html('');
 
 	/***** 編集ダイアログの定義 *****/
 	$("#editNews").dialog({
@@ -23,10 +52,11 @@ $(window).load(function(){
 				text :"出力",
 				click:function() {
 					var chkEnter = checkNewsEnter();
-					if(chkEnter.length <= 0) {
+					if(chkEnter) {
+								//alert('ok');
 						writeNewsPre();
 					} else {
-						alert(chkEnter);
+						alert('any error');
 					}
 				}
 			} ,
@@ -292,34 +322,19 @@ var split;
 ********************/
 function checkNewsEnter() {
 
-var ret = '';
-var str = '';
+var str;
+var ret = $("#enterNews").parsley().validate();
 
-var title    = $('#title').val();
-var newsDate = $('#newsDate').val();
-var digest   = CKEDITOR.instances.digest.getData();
-var content  = CKEDITOR.instances.content.getData();
-
-var cate = $("input[name='newsCate']:checked").val();
-
-	if(title.length <= 0) {
-		str = str + '・タイトル\n';
-	}
-	if(newsDate.length <= 0) {
-		str = str + '・記事日付\n';
-	}
-	if(cate.length <= 0) {
-		str = str + '・記事種類\n';
-	}
-	if(digest.length <= 0) {
-		str = str + '・記事概要\n';
-	}
-	if(content.length <= 0) {
-		str = str + '・記事本体\n';
+	CKEDITOR.instances.digest.updateElement();
+	str = $("#digest").val();
+	if(str.length <= 0) {
+		ret = false;
 	}
 
-	if(str.length >= 1) {
-		ret = '以下の項目が未入力です\n' + str;
+	CKEDITOR.instances.content.updateElement();
+	str = $("#content").val();
+	if(str.length <= 0) {
+		ret = false;
 	}
 
 	return ret;

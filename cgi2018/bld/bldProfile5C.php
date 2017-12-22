@@ -7,6 +7,7 @@ PHP5
 
 	require_once dirname(__FILE__) . '/../db/dbProfile5C.php';
 	require_once dirname(__FILE__) . '/../db/dbWorks5C.php';
+	require_once dirname(__FILE__) . '/../photo5C.php';
 	require_once dirname(__FILE__) . '/../proviTag5C.php';
 	require_once dirname(__FILE__) . '/../dateTime5C.php';
 	require_once dirname(__FILE__) . '/../strings5C.php';
@@ -76,6 +77,9 @@ class bldProfile5C {
 	const RECOMM_JS_VER = 'JS_VER';			/* オススメJSのバージョン */
 
 
+	var $photo;
+
+
 	/********************
 	ニュース埋め込み用リストタグ構築
 	パラメータ：店No
@@ -136,6 +140,10 @@ class bldProfile5C {
 	********************/
 	function bldSeqList($branchNo ,$list) {
 
+		$this->photo = new photo5C();
+		$photo = $this->photo;
+		$photo->getAllDirPhoto();
+
 		$ret['title'] = '<tr class="nodrop nodrag" id="profSeqListHTR">' .
 			'<th class="disp">表示</th>'         .
 			'<th class="dir">識別子</th>'        .
@@ -166,53 +174,60 @@ class bldProfile5C {
 	　　　　　　行インデックス
 	　　　　　　trの有無
 	戻り値　　：タグ
+
+	<div id="sort-1014" class="prof1 ui-state-default">
+		<div class="tnOut"><img src="../photo/tnNP.jpg" width="110" height="145"></div>
+		<div class="profItem profName">ともよ</div>
+		<div class="profItem profEdit"><input type="button" value="編集" class="toEdit" onclick="editProf(1014)"></div>
+	</div>
 	********************/
 	function bldSeqList1($prof1 ,$idx ,$showTR) {
 
 		$profID = $prof1[dbProfile5C::FLD_DIR];
 
-		if($showTR) {
-			$trBeg = '<tr id="' . $prof1[dbProfile5C::FLD_DIR ] . '">';		/* $idx */
-			$trEnd = '</tr>';
-		} else {
-			$trBeg = '';
-			$trEnd = '';
-		}
+		$photo = $this->photo;
+		$photoVal = $photo->getUsePhoto($profID ,array('TN'));
 
+		/* 写真 */
+		$photoUse = $photoVal['TN'];
+
+		if(strcmp($photoUse ,dbProfile5C::PHOTO_SHOW_NG ) == 0) {	/* NG */
+			$photoFile = '../photos/tnNG.jpg';
+		}
+		if(strcmp($photoUse ,dbProfile5C::PHOTO_SHOW_OK ) == 0) {
+			$photoInfo = $photo->getPhotoInfo($profID ,'TN');
+			$photoFile = '../photos/' . $profID . '/' . 'TN' . '.' . $photoInfo;
+		}
+		if(strcmp($photoUse ,dbProfile5C::PHOTO_SHOW_NP ) == 0) {	/* 準備中 */
+			$photoFile = '../photos/tnNP.jpg';
+		}
+		if(strcmp($photoUse ,dbProfile5C::PHOTO_SHOW_NOT) == 0) {	/* 写真ナシ */
+			$photoFile = '../photos/tnNP.jpg';
+		}
+		$photoStr = '<img src="' . $photoFile . '" width="110" height="145">';
+
+		/* 名前 */
+		$name = $prof1[dbProfile5C::FLD_NAME];
+
+		/* 識別子 */
+		$id = $prof1[dbProfile5C::FLD_DIR ];
+
+		/* 編集ボタン */
+		$editBtn = '<input type="button" value="　" style="font-size:0.9em;" onclick="editProf(\'' . $profID . '\')" />';
+
+		/* 表示/非表示 */
 		if(strcmp($prof1[dbProfile5C::FLD_DISP] ,dbProfile5C::DISP_ON) == 0) {
 			$disp = ' checked';
 		} else {
 			$disp = '';
 		}
-/*		$dispCB = '<input type="checkbox" id="disp' . $profID . '" name="disp' . $profID . '" value="U"' . $disp . ' onclick="enableWriteProfSeq();" class="dispProfSW" />';*/
 		$dispCB = '<input type="checkbox" id="disp' . $profID . '" name="disp' . $profID . '" value="U"' . $disp . ' onchange="enableWriteProfSeq();" class="dispProfSW" />';
 
-/*
-		$workRest = '';
-		if(strlen($prof1['WORK_DAY']) >= 1) {
-			$workRest = '出勤日：' . $prof1[dbProfile5C::FLD_'WORK_DAY];
-		}
-		if(strlen($prof1['REST_DAY']) >= 1) {
-			$workRest = '公休日：' . $prof1[dbProfile5C::FLD_REST_DAY];
-		}
-*/
-
-		$workRest = $prof1[dbProfile5C::FLD_MASTERS_COMMENT];
-
-		if(mb_strlen($workRest ,'UTF-8') >= 35) {
-			$workRest = mb_substr($workRest ,0 ,35 ,'UTF-8');
-		}
-
-
-		$editBtn = '<input type="button" value="　" style="font-size:0.9em;" onclick="editProf(\'' . $profID . '\')" />';
-
-		$ret = $trBeg .
-			'<td class="disp">'     . $dispCB   . '</td>' .
-			'<td class="dir">'      . $prof1[dbProfile5C::FLD_DIR ] . '</td>' .
-			'<td class="name">'     . $prof1[dbProfile5C::FLD_NAME] . '</td>' .
-			'<td class="workRest">' . $workRest . '</td>' .
-			'<td class="edit">'     . $editBtn  . '</td>' .
-			$trEnd;
+		$ret = '<div id="sort-' . $id . '" class="prof1 ui-state-default">' .
+			'<div class="tnOut">' . $photoStr . '</div>' .
+			'<div class="profItem profName">' . $name . '</div>' .
+			'<div class="profItem profEdit">' . $editBtn . '</div>' .
+			'</div>';
 
 		return $ret;
 	}

@@ -5,7 +5,40 @@
 var CURR_AREA_NO = 0;
 
 /***** 初期化 *****/
-jQuery(document).ready(function(){
+$(document).ready(function(){
+
+	CKEDITOR.instances.mastComment.on("blur", function(e) {
+		CKEDITOR.instances.mastComment.updateElement();
+		var str = $("#mastComment").val();
+		var msg;
+
+		if(str.length >= 1) {
+			msg = '';
+		} else {
+			msg = 'any error';
+		}
+		$("#warnMastComment").html(msg);
+	});
+
+	CKEDITOR.instances.appComment.on("blur", function(e) {
+		CKEDITOR.instances.appComment.updateElement();
+		var str = $("#appComment").val();
+		var msg;
+
+		if(str.length >= 1) {
+			msg = '';
+		} else {
+			msg = 'any error';
+		}
+		$("#warnAppComment").html(msg);
+	});
+
+});
+
+/***** 表示順のドロップ時の動作 *****/
+$(document).on('sortstop' ,'#profSeqListD' ,function(){
+
+	$("#bldProfList").prop('disabled' ,false);
 });
 
 $(window).load(function(){
@@ -20,10 +53,12 @@ $(window).load(function(){
 				text :"出力",
 				click:function() {
 					var chkEnter = checkProfEnter();
-					if(chkEnter.length <= 0) {
-						writeProfPreA();
+					if(chkEnter) {
+alert('OK');
+//						writeProfPreA();
 					} else {
-						alert(chkEnter);
+alert('any error');
+						//alert(chkEnter);
 					}
 				}
 			} ,
@@ -39,6 +74,7 @@ $(window).load(function(){
 	/***** プロファイルリストの読み込み *****/
 	getProfileList();
 });
+
 
 /********************
 プロファイルリストの読み込み
@@ -61,29 +97,14 @@ var result;
 	});
 
 	result.done(function(response) {
-					//console.debug(response);
+					console.debug(response);
 
-		$("#profSeqListH").html(response['SEQ']['title']);
+				//$("#profSeqListH").html(response['SEQ']['title']);
 		$("#profSeqListD").html(response['SEQ']['data']);
 		$(".dispProfSW").toggleSwitch();
 
 		/***** プロファイル表示順 *****/
-		$("#profSeqList").tableDnD({
-
-			onDragClass : "whileDrag" ,	//ドラッグ中の印
-
-			onDrop: function(table, row) {
-				profOrder = $.tableDnD.serialize();
-						console.debug(profOrder);
-							//writeProfOrder(profOrder);
-				enableWriteProfSeq();
-			}
-		});
-
-				/*
-				$("#profListD").html(ret['FORNEWS']['data']);
-				$("#profListFPD").html(ret['FORNEWS']['data']);
-				*/
+		$("#profSeqListD").sortable();
 	});
 
 	result.fail(function(result, textStatus, errorThrown) {
@@ -386,6 +407,192 @@ console.debug(currID + ' ' + newID);
 }
 
 
+
+
+/********************
+表示順、表示/非表示更新時の出力
+********************/
+function updProfSeqPre() {
+
+var result = getSess();
+
+	result.done(function(response) {
+					//console.debug(response);
+		if(response == SESS_OWN_INTIME) {
+				writeProfSeqPreA();
+		} else {
+				alert('長時間操作がなかったため接続が切れました。ログインしなおしてください。');
+//				location.href = 'login.html';
+		}
+	});
+
+	result.fail(function(result, textStatus, errorThrown) {
+			console.debug('error at updProfSeqPre:' + result.status + ' ' + textStatus);
+	});
+
+	result.always(function() {
+	});
+}
+
+/********************
+セッション情報の更新
+********************/
+function writeProfSeqPreA() {
+
+var result = updSess();
+
+	result.done(function(response) {
+					//console.debug(response);
+		writeProfSeqDisp();
+	});
+
+	result.fail(function(result, textStatus, errorThrown) {
+			console.debug('error at writeProfSeqPreA:' + result.status + ' ' + textStatus);
+	});
+
+	result.always(function() {
+	});
+}
+
+/********************
+表示順を出力
+********************/
+function writeProfSeqDisp() {
+
+var branchNo  = $('#branchNo').val();
+var dispSW    = $(".dispProfSW").serialize();
+var profOrder = $("#profSeqListD").sortable('serialize');
+
+var sendData;
+
+	sendData = profOrder + '&branchNo=' + branchNo
+
+console.debug(sendData);
+
+//var result;
+//
+//	result = $.ajax({
+//		type : "post" ,
+//		url  : "cgi/ajax/writeProfSeqDisp.php" ,
+//					//		data : profOrder ,		// see commonA.js
+//
+//		data : {
+//			groupNo  : groupNo  ,
+//			branchNo : branchNo ,
+//			dispSW   : dispSW   ,
+//			order    : profOrder
+//		} ,
+//
+//		cache : false
+//	};
+//
+//
+//	result.done(function(response) {
+//					//console.debug(response);
+//
+////		showProfListAll();		//リスト再表示
+////		bldProfListHTML(bld);	//アルバムページ再出力
+////		bldProfSitemap();
+//	});
+//
+//	result.fail(function(result, textStatus, errorThrown) {
+//			console.debug('error at writeProfSeqDisp:' + result.status + ' ' + textStatus);
+//	});
+//
+//	result.always(function() {
+//	});
+}
+
+/********************
+リスト再表示
+********************/
+function showProfListAll() {
+
+var groupNo  = $('#groupNo').val();
+var profListTag;
+
+	$.ajax({
+		type : "get" ,
+		url  : "cgi/ajax/bldProfList.php" ,
+		data : {
+			groupNo  : groupNo  ,
+			branchNo : branchNo
+		} ,
+
+		cache    : false  ,
+		dataType : 'json' ,
+
+		success : function(result) {
+					console.debug(result);
+			profListTag = result;
+					//console.debug(ret['TITLE']);
+		} ,
+
+		error : function(result) {
+					console.debug('error at showList:' + result);
+		} ,
+
+		complete : function(result) {
+					//alert(newTag['data']);
+			/*** ニュース埋め込み用 ***/
+			$("#profListD").html(profListTag['news']['data']);
+
+			/*** 定型文埋め込み用 ***/
+			$("#profListFPD").html(profListTag['news']['data']);
+
+			/*** プロファイルリスト ***/
+			$("#profSeqListD").html(profListTag['prof']['data']);
+
+			$("#profSeqList").tableDnD({
+				onDrop: function(table, row) {
+									//profOrder = $.tableDnD.serialize();
+									//		console.debug(profOrder);
+									//enableWriteProfSeq();
+				}
+			});
+
+			$(".dispProfSW").toggleSwitch();
+		}
+	});
+
+}
+
+/********************
+アルバムHTML、JSのファイル出力
+********************/
+function bldProfListHTML(bld) {
+
+var groupNo  = $('#groupNo').val();
+var branchNo = $('#branchNo').val();
+
+	$.ajax({
+		type :"post" ,
+		url  :"cgi/ajax/bldProfHTML.php" ,
+		data : {
+			groupNo  : groupNo  ,
+			branchNo : branchNo ,
+			bld      : bld      ,
+			profDir  : ''
+		} ,
+
+		cache    :false ,
+//		dataType :'json' ,
+
+		success :function(result) {
+					console.debug(result);
+			ret = result;
+					//console.debug(ret['TITLE']);
+		} ,
+
+		error :function(result) {
+					console.debug('error at bldProfListHTML:' + result);
+		}
+	});
+}
+
+
+
+
 /*******************************************************************************/
 /*******************************************************************************/
 /*******************************************************************************/
@@ -419,29 +626,7 @@ function writeProfOrder(profOrder) {
 					//console.debug(result);
 		}
 	});
-
 }
-
-
-/********************
-iframe内の画像ファイルのアップロード
-********************/
-function imgFileUpload() {
-
-var profDir = $('#profDir').val();
-var newProf = $('#newProf').val();
-
-			//console.debug('画像ファイルアップロード');
-
-//	if(newProf == 'new') {
-//		$('#seleImgFile').contents().find('#profDir').val(profDir);
-//	}
-//
-//			//window.frames[0].document.forms[0].submit();
-//	$('#seleImgFile').contents().find('#fileSelector').submit();
-}
-
-
 
 
 function setFileSeleVals(dir ,profData) {
@@ -565,83 +750,20 @@ function setShowProfDir(dir) {
 ********************/
 function checkProfEnter() {
 
-var newProf  = $('#newProf').val();
+var str;
+var ret = $("#enterProfile").parsley().validate();
 
-var groupNo  = $('#groupNo').val();
-var branchNo = $('#branchNo').val();
-
-var profDir  = $('#profDir' ).val();
-var profName = $('#profName').val();
-
-	/*** 出勤日/公休日 ***/
-/*var profWRSele = WRSele;*/
-
-		//var profWRDay = $('#profWRDay').val();
-
-var ret = '';
-var str = '';
-var chkIDStr = '';
-
-	if(newProf == 'edit') {
-		/***** 編集 *****/
-		if(profName.length <= 0) {
-			str = str + '・名前\n';
-		}
-
-				/*
-				if(profWRSele.length <= 0) {
-					str = str + '・出勤/公休の選択\n';
-				}
-				*/
-
-		if(str.length >= 1) {
-			ret = '以下の項目が未入力です\n' + str;
-		}
-	} else {
-		/***** 新規 *****/
-		if(profDir.length <= 0) {
-			/*** 識別子が未入力なら常にNG ***/
-			str = str + '・識別子\n';
-
-			if(profName.length <= 0) {
-				str = str + '・名前\n';
-			}
-
-					/*
-					if(profWRSele.length <= 0) {
-						str = str + '・出勤/公休の選択\n';
-					}
-					*/
-
-			if(str.length >= 1) {
-				ret = '以下の項目が未入力です\n' + str;
-			}
-		} else {
-			/*** 識別子に入力があるときは入力チェック ***/
-			chkIDStr = checkID(profDir);
-			if(chkIDStr.length <= 0) {
-				//識別子の入力OK
-				if(profName.length <= 0) {
-					str = str + '・名前\n';
-				}
-
-						/*
-						if(profWRSele.length <= 0) {
-							str = str + '・出勤/公休の選択\n';
-						}
-						*/
-
-				if(str.length >= 1) {
-					ret = '以下の項目が未入力です\n' + str;
-				}
-			} else {
-				//識別子の入力NG
-				ret = chkIDStr;
-			}
-		}
-
-	}
-
+//	CKEDITOR.instances.mastComment.updateElement();
+//	str = $("#mastComment").val();
+//	if(str.length <= 0) {
+//		ret = false;
+//	}
+//
+//	CKEDITOR.instances.appComment.updateElement();
+//	str = $("#appComment").val();
+//	if(str.length <= 0) {
+//		ret = false;
+//	}
 
 	return ret;
 }
@@ -1041,22 +1163,6 @@ function updProf(groupNo ,branchNo ,profDir) {
 
 
 /***********************************************************************************************************************/
-/********************
-表示順、表示/非表示更新時の出力
-********************/
-function updProfSeq() {
-
-	updProfSeqPre();
-}
-
-
-/********************
-表示順、表示/非表示更新時の出力
-********************/
-function updProfSeq2() {
-
-	updProfSeqPre2();
-}
 
 
 
@@ -1065,21 +1171,6 @@ function updProfSeq2() {
 
 
 
-/********************
-「表示順反映」ボタンの有効化
-********************/
-function enableWriteProfSeq() {
-
-	$("#bldProfList").prop('disabled' ,false);
-}
-
-/********************
-「表示順反映」ボタンの有効化
-********************/
-function enableWriteProfSeq2() {
-
-	$("#bldProfList2").prop('disabled' ,false);
-}
 
 
 /********************

@@ -1,6 +1,6 @@
 <?php
 	session_start();
-	ini_set( 'display_errors', 1 );
+	ini_set('display_errors' ,1);
 
 	require_once dirname(__FILE__) . '/../cgi2018/sess/sess5C.php';
 	require_once dirname(__FILE__) . '/../cgi2018/logFile5C.php';
@@ -13,35 +13,29 @@
 
 	if($cond == sess5C::NO_ID) {
 		/* セッションデータナシ　ログイン画面へ */
-					logFile5C::debug('セッションファイルナシ');
 					logFile5C::general('セッションファイルナシ');
 		header('Location: login.html');
 	}
 
 	if($cond == sess5C::OWN_TIMEOUT) {
 		/* 自IDでタイムアウト　タイムアウトのダイアログ、ログイン画面へ */
-						logFile5C::debug('自ID タイムアウト');
 						logFile5C::general('自ID タイムアウト');
 		header('Location: login.html');
 	}
 
 	if($cond == sess5C::OTHER_TIMEOUT) {
 		/* 他IDでタイムアウト　ログイン画面へ */
-						logFile5C::debug('他ID タイムアウト');
 						logFile5C::general('他ID タイムアウト');
 		header('Location: login.html');
 	}
 
 	if($cond == sess5C::OWN_INTIME) {
 		/* 自IDでログイン中　メンテ画面へ */
-						logFile5C::debug('自ID ログイン中');
 						logFile5C::general('自ID ログイン中');
 	}
 
-
 	if($cond == sess5C::OTHER_INTIME) {
 		/* 他IDでログイン中　「他でログイン中」のダイアログ、ログイン不可 */
-						logFile5C::debug('他ID ログイン中');
 						logFile5C::general('他ID ログイン中');
 		header('Location: login.html');
 	}
@@ -70,6 +64,8 @@
 <link href="../css2018/jq/jquery.alerts.css" rel="stylesheet">
 <link href="../css2018/jq/tinytools.toggleswitch.css" rel="stylesheet">
 
+<link href="../css2018/parsley/parsley.css" rel="stylesheet">
+
 <link href="../css2018/mtnCommon.css?<?php print $vesion; ?>" rel="stylesheet">
 
 <link href="../css2018/blog.css?<?php print $vesion; ?>" rel="stylesheet">
@@ -87,6 +83,10 @@
 
 <script src="../js2018/ckEditor/ckeditor.js"></script>
 
+<script src="../js2018/parsley/parsley.min.js"></script>
+<script src="../js2018/parsley/i18n/ja.js"></script>
+<script src="../js2018/parsley/i18n/ja.extra.js"></script>
+
 <script src="../js2018/mtn/ctrlSess.js?<?php print $vesion; ?>"></script>
 <script src="../js2018/mtn/logoutSess.js?<?php print $vesion; ?>"></script>
 
@@ -98,11 +98,13 @@
 <script src="../js2018/mtn/prof.js?<?php print $vesion; ?>"></script>
 <script src="../js2018/mtn/profOut.js?<?php print $vesion; ?>"></script>
 
+<script src="../js2018/mtn/system.js?<?php print $vesion; ?>"></script>
+<script src="../js2018/mtn/recruit.js?<?php print $vesion; ?>"></script>
+
 <!--
 <script src="../js2018/mtn/profSeq.js?<?php print $vesion; ?>"></script>
 <script src="../js2018/mtn/profSeq2.js"></script>
 -->
-
 
 <!--
 <script src="../js2018/mtn/blog.js"></script>
@@ -114,22 +116,20 @@
 <script src="../js2018/mtn/work.js"></script>
 <script src="../js2018/mtn/fileSele.js"></script>
 -->
-
 </head>
 <body>
-<input type="hidden" id="branchNo" name="branchNo" value="<?php print $branchNo; ?>">
-
-<input type="hidden" id="newNewsRec"  name="newNewsRec" value="<?php print dbNews5C::NEW_REC; ?>">
-<input type="hidden" id="newBlogRec"  name="newBlogRec" value="<?php print dbMBlog5C::NEW_REC; ?>">
+<input type="hidden" id="branchNo"   name="branchNo" value="<?php print $branchNo; ?>">
+<input type="hidden" id="newNewsRec" name="newNewsRec" value="<?php print dbNews5C::NEW_REC; ?>">
+<input type="hidden" id="newBlogRec" name="newBlogRec" value="<?php print dbMBlog5C::NEW_REC; ?>">
 
 <div id="tabA">
 	<ul>
 		<li><a href="#tabsProfile">プロファイル</a></li>
 		<li><a href="#tabsNews">ニュース</a></li>
+		<li><a href="#tabsRecruit">求人</a></li>
+		<li><a href="#tabsSystem">システム</a></li>
 
 <!--
-		<li><a href="#tabsSystem">システム</a></li>
-		<li><a href="#tabsRecruit">求人</a></li>
 		<li><a href="#tabsTop">とっぷ</a></li>
 -->
 	</ul>
@@ -137,48 +137,100 @@
 	<!-- ***** タブの中身の定義 ***** -->
 	<!-- ニュース -->
 	<div id="tabsNews" class="tabArea">
-		<input type="button" value="新規ニュース" onclick="newNews()">&nbsp;&nbsp;
-		<input type="button" value="定型文編集" onclick="editFixPhrase()">
-		<br><br>
-		<table id="newsList">
-			<thead id="newsListH"></thead>
-			<tbody id="newsListD"></tbody>
-		</table>
-		<hr>
-		<input type="button" value="表示可否反映" id="bldNewsList" onclick="updNewsDisp();" disabled="disabled">
+
+		<div id="tabNewsTop">
+			<input type="button" value="新規ニュース" onclick="newNews()">&nbsp;&nbsp;
+			<input type="button" value="定型文編集" onclick="editFixPhrase()">
+			<br><br>
+		</div>
+
+		<div id="tabNewsMid" class="tabMid">
+			<table id="newsList">
+				<thead id="newsListH"></thead>
+				<tbody id="newsListD"></tbody>
+			</table>
+		</div>
+
+		<div id="tabNewsBottom" class="tabBottomBtn">
+			<hr>
+			<input type="button" value="表示可否反映" id="bldNewsList" onclick="updNewsDisp();" disabled="disabled">
+		</div>
 	</div>
 
+	<!-- プロファイル -->
 	<div id="tabsProfile" class="tabArea">
-		<input type="button" value="新規プロファイル" onclick="newProf()"><br><br>
-		<table id="profSeqList">
-			<thead id="profSeqListH"></thead>
-			<tbody id="profSeqListD"></tbody>
-		</table>
-		<hr>
-		<input type="button" value="表示順反映" id="bldProfList" onclick="updProfSeq();" disabled="disabled">
-		<?php
-			if(strcmp($mtn ,'Y') == 0) {
-				print('&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="全プロファイル一括更新" id="rebldAllProf" onclick="updAllProf();">');
-			}
-		?>
+
+		<div id="tabProfTop">
+			<input type="button" value="新規プロファイル" onclick="newProf()"><br><br>
+		</div>
+
+		<div id="tabProfMid" class="tabMid">
+			<div id="profSeqListD"></div>
+		</div>
+
+		<div id="tabProfBottom" class="tabBottomBtn">
+			<hr>
+			<input type="button" value="表示順反映" id="bldProfList" onclick="updProfSeqPre();" disabled="disabled">
+			<?php
+				if(strcmp($mtn ,'Y') == 0) {
+					print('&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="全プロファイル一括更新" id="rebldAllProf" onclick="updAllProf();">');
+				}
+			?>
+		</div>
 	</div>
 
-	<div id="tabsSystem" class="tabArea NOTUSE">
-		（料金表）
-		<hr>
-		<input type="button" value="反映" id="bldSystemInfo" onclick="updSystemInfo();" disabled="disabled">
+	<div id="tabsSystem" class="tabArea">
+		<div id="tabSystemTop">
+			システム内容<span class="required">*</span>
+		</div>
+
+		<div id="tabSystemMid" class="tabMid">
+			<textarea id="systemStr" name="systemStr" cols="60" rows="4"></textarea>
+			<script type="text/javascript">
+				CKEDITOR.replace('systemStr' ,
+					{
+						height : 120
+						//skin : 'office2003'
+					});
+			</script>
+			<div id="warnSystemStr" class="parsley-errors-list filled"></div>
+		</div>
+
+		<div id="tabSystemBottom" class="tabBottomBtn">
+			<hr>
+			<input type="button" value="出力" id="bldSystemInfo" onclick="writePriceVal();">	<!--  disabled="disabled" -->
+		</div>
 	</div>
 
-	<div id="tabsRecruit" class="tabArea NOTUSE">
-		（求人）
-		<hr>
-		<input type="button" value="反映" id="bldRecruitInfo" onclick="updRecruitInfo();" disabled="disabled">
+	<div id="tabsRecruit" class="tabArea">
+		<div id="tabRecruitTop">
+			求人内容<span class="required">*</span>
+		</div>
+
+		<div id="tabSystemMid" class="tabMid">
+			<textarea id="recruitStr" name="recruitStr" cols="60" rows="4"></textarea>
+			<script type="text/javascript">
+				CKEDITOR.replace('recruitStr' ,
+					{
+						height : 120
+						//skin : 'office2003'
+					});
+			</script>
+			<div id="warnRecruitStr" class="parsley-errors-list filled"></div>
+		</div>
+
+		<div id="tabRecruitBottom" class="tabBottomBtn">
+			<hr>
+			<input type="button" value="出力" id="bldRecruitInfo" onclick="writeRecruitVal();">	<!--  disabled="disabled" -->
+		</div>
 	</div>
 
 	<div id="tabsTop" class="tabArea NOTUSE">
 		（とっぷ）
-		<hr>
-		<input type="button" value="反映" id="bldTopInfo" onclick="updTopInfo();" disabled="disabled">
+		<div id="topReflect" class="tabBottomBtn">
+			<hr>
+			<input type="button" value="出力" id="bldTopInfo" onclick="updTopInfo();" disabled="disabled">
+		</div>
 	</div>
 
 
@@ -205,77 +257,75 @@
 <!-- -- 編集ダイアログ -- -->
 <!-- --ニュース編集------------------------------------------------------------- -->
 <div id="editNews" title="Dialog Title">
-	<div id="editLeftN">
-		<table>
-			<tr>
-				<td>タイトル</td>
-				<td><input type="text" id="title" name="title" size="35" value=""></td>
-			</tr>
-			<tr>
-				<td>記事日付</td>
-				<td><input type="text" id="newsDate" name="newsDate" size="35" value=""></td>
-			</tr>
-			<tr class="NOTUSE">
-				<td>期間</td>
-				<td><input type="text" id="newsTerm" name="newsTerm" size="35" value=""></td>
-			</tr>
-
-			<tr>
-				<td>期間</td>
-				<td><input type="text" id="begDate" name="begDate" size="8" value="">～<input type="text" id="endDate" name="endDate" size="8" value=""></td>
-			</tr>
-
-			<tr>
-				<td>記事種類</td>
-				<td>
-					<input type="radio" name="newsCate" id="cateE" value="E">イベント
-					<input type="radio" name="newsCate" id="cateW" value="W">女性
-					<input type="radio" name="newsCate" id="cateM" value="M">会員
-					<input type="radio" name="newsCate" id="cateO" value="O">その他
-				</td>
-			</tr>
-
-			<tr>
-				<td>表示開始日時</td>
-				<td><input type="text" id="dispBegDate" name="dispBegDate" size="35" value=""></td>
-			</tr>
-
-			<tr>
-				<td colspan="2"><hr></td>
-			</tr>
-			<tr>
-				<td>記事概要</td>
-				<td>
-					<textarea id="digest" name="digest" cols="60" rows="4"></textarea>
-					<script type="text/javascript">
-						CKEDITOR.replace('digest' ,
-							{
-								height : 120
-								//skin : 'office2003'
-							});
-					</script>
-				</td>
-			</tr>
-
-			<tr>
-				<td colspan="2"><hr></td>
-			</tr>
-
-			<tr>
-				<td>記事本体</td>
-				<td>
-					<textarea id="content" name="content" cols="60" rows="18"></textarea>
-					<script type="text/javascript">
-						CKEDITOR.replace('content' ,
-							{
-								//skin : 'office2003'
-							});
-					</script>
-				</td>
-			</tr>
-		</table>
-		<div class="delNews"><input type="button" value="削除" id="delNewsBtn" onclick="cfmDelNews();"></div>
-	</div>
+	<form id="enterNews" data-parsley-validate data-parsley-trigger="keyup focusout change input">
+		<div id="editLeftN">
+			<table>
+				<tr>
+					<td>タイトル<span class="required">*</span></td>
+					<td><input type="text" id="title" name="title" size="35" value="" required="" placeholder="テキストを入力してください"></td>
+				</tr>
+				<tr>
+					<td>記事日付<span class="required">*</span></td>
+					<td><input type="text" id="newsDate" name="newsDate" size="35" value=""></td>
+				</tr>
+				<tr class="NOTUSE">
+					<td>期間</td>
+					<td><input type="text" id="newsTerm" name="newsTerm" size="35" value=""></td>
+				</tr>
+				<tr>
+					<td>期間</td>
+					<td><input type="text" id="begDate" name="begDate" size="8" value="">～<input type="text" id="endDate" name="endDate" size="8" value=""></td>
+				</tr>
+				<tr>
+					<td>記事種類</td>
+					<td>
+						<input type="radio" name="newsCate" id="cateE" value="E">イベント
+						<input type="radio" name="newsCate" id="cateW" value="W">女性
+						<input type="radio" name="newsCate" id="cateM" value="M">会員
+						<input type="radio" name="newsCate" id="cateO" value="O">その他
+					</td>
+				</tr>
+				<tr>
+					<td>表示開始日時</td>
+					<td><input type="text" id="dispBegDate" name="dispBegDate" size="35" value=""></td>
+				</tr>
+				<tr>
+					<td colspan="2"><hr></td>
+				</tr>
+				<tr>
+					<td>記事概要<span class="required">*</span></td>
+					<td>
+						<textarea id="digest" name="digest" cols="60" rows="4" required="" data-parsley-trigger="change"></textarea>		<!--    data-parsley-trigger="change"     -->
+						<script type="text/javascript">
+							CKEDITOR.replace('digest' ,
+								{
+									height : 120
+									//skin : 'office2003'
+								});
+						</script>
+						<div id="warnDigest" class="parsley-errors-list filled"></div>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2"><hr></td>
+				</tr>
+				<tr>
+					<td>記事本体<span class="required">*</span></td>
+					<td>
+						<textarea id="content" name="content" cols="60" rows="18" required="" data-parsley-trigger="change"></textarea>
+						<script type="text/javascript">
+							CKEDITOR.replace('content' ,
+								{
+									//skin : 'office2003'
+								});
+						</script>
+						<div id="warnContent" class="parsley-errors-list filled"></div>
+					</td>
+				</tr>
+			</table>
+			<div class="delNews"><input type="button" value="削除" id="delNewsBtn" onclick="cfmDelNews();"></div>
+		</div>
+	</form>
 
 	<div id="DelNewsDlg" class="cfmDelPrompt ui-draggable" style="position: absolute; z-index: 99999; padding: 0px; margin: 0px; min-width: 310px; max-width: 310px; top: 329px; left: 436.5px;   display:none">
 		<h1 id="popup_titleDelNews" style="cursor: move;">記事の削除</h1>
@@ -304,6 +354,7 @@
 					//skin : 'office2003'
 				});
 		</script>
+		<div id="warnFixPhraseStr" class="parsley-errors-list filled"></div>
 	</div>
 	<br class="clear">
 </div>
@@ -314,97 +365,70 @@
 <!-- --プロファイル編集--------------------------------------------------------- -->
 <div id="editProfDlg" title="Dialog Title" class="NOTUSE">
 	<div id="profileA">
-		<div id="editLeftP">
-			<input type="hidden" name="newProf" id="newProf" value="">
-			<input type="checkbox" name="newFace" id="newFace" value="N"><label for="newFace">新人</label><br><br>
+		<form id="enterProfile" data-parsley-validate data-parsley-trigger="keyup focusout change input">
+			<div id="editLeftP">
+				<input type="hidden" name="newProf" id="newProf" value="">
+				<input type="checkbox" name="newFace" id="newFace" value="N"><label for="newFace">新人</label><br><br>
 
-			<table class="profItem">
-				<tr class="profItemA NOTUSE">
-					<td class="profItemAA">識別子</td>
-					<td>
-						<div id="enterProfNAAA">	<!-- 新規 -->
-							<input type="text" id="profDirAAA" name="profDirAAA" size="35" value="">
-						</div>
-						<div id="enterProfEAAA">	<!-- 更新 -->
-							<!-- <input type="text" id="profDirShow" name="profDirShow" size="35" disabled="disabled" value=""> -->
-							<div id="profDirShowAAA"></div><div id="editDir"><input type="button" value="識別子変更" id="editDirBtn" onclick="showEditDir();"  ></div>
+				<table class="profItem">
+					<tr class="profItemA">
+						<td class="profItemAA">識別子<span class="required">*</span></td>
+						<td>
+							<div id="enterProfN">	<!-- 新規 -->
+								<input type="text" id="profDir" name="profDir" size="35" value="" required="" >
+							</div>
+							<div id="enterProfE">	<!-- 更新 -->
+								<div id="profDirShow"></div><div id="editDir"><input type="button" value="識別子変更" id="editDirBtn" onclick="showEditDir();"  ></div>
 
-							<div id="editDirDlgAAA"  class="ui-draggable" style="position: absolute; z-index: 999; padding: 0px; margin: 0px; min-width: 310px; max-width: 410px; top: 324px; left: 422.5px;">
-								<h1 id="popup_titleDirAAA" style="cursor: move;">識別子変更</h1>
-								<div id="popup_contentDirAAA" class="prompt">
-									<div id="popup_messageDirAAA">
-										新識別子：<input type="text" name="newDirAAA" id="newDirAAA" class="enterDir">
-													<!-- <input type="button" value="更新" onclick="updProfDir();">&nbsp;&nbsp;<input type="button" value="閉じる" onclick="hideEditDir();"> -->
-									</div>
-									<div id="popup_panelDir">
-										<input type="button" value="&nbsp;更新&nbsp;" onclick="updProfDir()">
-										<input type="button" value="&nbsp;閉じる&nbsp;" onclick="hideEditDir();">
+								<div id="editDirDlg" class="ui-draggable editDirDlg" style="position: absolute; z-index: 999; padding: 0px; margin: 0px; min-width: 310px; max-width: 410px; top: 324px; left: 422.5px;">
+									<h1 id="popup_titleDir" style="cursor: move;">識別子変更</h1>
+									<div id="popup_contentDir" class="prompt">
+										<div id="popup_messageDir">
+											新識別子：<input type="text" name="newDir" id="newDir" class="enterDir">
+														<!-- <input type="button" value="更新" onclick="updProfDir();">&nbsp;&nbsp;<input type="button" value="閉じる" onclick="hideEditDir();"> -->
+										</div>
+										<div id="popup_panelDir">
+											<input type="button" value="&nbsp;更新&nbsp;" onclick="updProfDir()">
+											<input type="button" value="&nbsp;閉じる&nbsp;" onclick="hideEditDir();">
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
-					</td>
-				</tr>
+						</td>
+					</tr>
 
-				<tr class="profItemA">
-					<td class="profItemAA">識別子</td>
-					<td>
-						<div id="enterProfN">	<!-- 新規 -->
-							<input type="text" id="profDir" name="profDir" size="35" value="">
-						</div>
-						<div id="enterProfE">	<!-- 更新 -->
-							<!-- <input type="text" id="profDirShow" name="profDirShow" size="35" disabled="disabled" value=""> -->
-							<div id="profDirShow"></div><div id="editDir"><input type="button" value="識別子変更" id="editDirBtn" onclick="showEditDir();"  ></div>
+					<tr class="profItemA">
+						<td class="profItemAA">名前<span class="required">*</span></td>
+						<td><input type="text" id="profName" name="profName" size="35" value="" required=""></td>
+					</tr>
+					<tr class="profItemA">
+						<td class="profItemAA">年齢</td>
+						<td><input type="text" id="profAge" name="profAge" size="35" value=""></td>
+					</tr>
 
-							<div id="editDirDlg"  class="ui-draggable" style="position: absolute; z-index: 999; padding: 0px; margin: 0px; min-width: 310px; max-width: 410px; top: 324px; left: 422.5px;">
-								<h1 id="popup_titleDir" style="cursor: move;">識別子変更</h1>
-								<div id="popup_contentDir" class="prompt">
-									<div id="popup_messageDir">
-										新識別子：<input type="text" name="newDir" id="newDir" class="enterDir">
-													<!-- <input type="button" value="更新" onclick="updProfDir();">&nbsp;&nbsp;<input type="button" value="閉じる" onclick="hideEditDir();"> -->
-									</div>
-									<div id="popup_panelDir">
-										<input type="button" value="&nbsp;更新&nbsp;" onclick="updProfDir()">
-										<input type="button" value="&nbsp;閉じる&nbsp;" onclick="hideEditDir();">
-									</div>
-								</div>
-							</div>
-						</div>
-					</td>
-				</tr>
+					<tr class="profItemA NOTUSE">
+						<td class="profItemAA">誕生日</td>
+						<td><input type="text" id="profBirthDate" name="profBirthDate" size="35" value=""></td>
+					</tr>
 
-				<tr class="profItemA">
-					<td class="profItemAA">名前</td>
-					<td><input type="text" id="profName" name="profName" size="35" value=""></td>
-				</tr>
-				<tr class="profItemA">
-					<td class="profItemAA">年齢</td>
-					<td><input type="text" id="profAge" name="profAge" size="35" value=""></td>
-				</tr>
+					<tr class="profItemA">
+						<td class="profItemAA">身長</td>
+						<td><input type="text" id="profHeight" name="profHeight" size="35" value=""></td>
+					</tr>
+					<tr class="profItemA">
+						<td class="profItemAA">スリーサイズ</td>
+						<td><input type="text" id="profSize" name="profSize" size="35" value=""></td>
+					</tr>
 
-				<tr class="profItemA NOTUSE">
-					<td class="profItemAA">誕生日</td>
-					<td><input type="text" id="profBirthDate" name="profBirthDate" size="35" value=""></td>
-				</tr>
+					<tr class="profItemA">
+						<td class="profItemAA">星座</td>
+						<td><input type="text" id="profZodiac" name="profZodiac" size="35" value=""></td>
+					</tr>
 
-				<tr class="profItemA">
-					<td class="profItemAA">身長</td>
-					<td><input type="text" id="profHeight" name="profHeight" size="35" value=""></td>
-				</tr>
-				<tr class="profItemA">
-					<td class="profItemAA">スリーサイズ</td>
-					<td><input type="text" id="profSize" name="profSize" size="35" value=""></td>
-				</tr>
-
-				<tr class="profItemA">
-					<td class="profItemAA">星座</td>
-					<td><input type="text" id="profZodiac" name="profZodiac" size="35" value=""></td>
-				</tr>
-
-				<tr class="profItemA">
-					<td class="profItemAA">血液型</td>
-					<td><input type="text" id="profBloodType" name="profBloodType" size="35" value=""></td>
-				</tr>
+					<tr class="profItemA">
+						<td class="profItemAA">血液型</td>
+						<td><input type="text" id="profBloodType" name="profBloodType" size="35" value=""></td>
+					</tr>
 
 						<!--
 						<tr class="profItemA">
@@ -422,103 +446,99 @@
 						-->
 						<!-- <input type="text" id="profWorkTime" name="profWorkTime" size="35" value=""> -->
 
-				<tr class="profItemA">
-					<td class="profItemAA">店長コメント</td>
-					<td>
-						<textarea id="mastComment" name="mastComment" cols="45" rows="6"></textarea>
-						<script type="text/javascript">
-							CKEDITOR.replace('mastComment' ,
-								{
-									//skin : 'office2003'
-								});
-						</script>
-					</td>
-				</tr>
-				<tr>
-					<td class="profItemAA">アピールコメント</td>
-					<td><textarea id="appComment" name="appComment" cols="45" rows="6"></textarea></td>
-						<script type="text/javascript">
-							CKEDITOR.replace('appComment' ,
-								{
-									//skin : 'office2003'
-								});
-						</script>
-				</tr>
-				<tr>
-					<td colspan="2"><hr></td>
-				</tr>
+					<tr class="profItemA">
+						<td class="profItemAA">店長コメント</td>
+						<td>
+							<textarea id="mastComment" name="mastComment" cols="45" rows="6"></textarea>
+							<script type="text/javascript">
+								CKEDITOR.replace('mastComment' ,
+									{
+										//skin : 'office2003'
+									});
+							</script>
+							<div id="warnMastComment" class="parsley-errors-list filled"></div>
+						</td>
+					</tr>
+					<tr>
+						<td class="profItemAA">アピールコメント</td>
+						<td>
+							<textarea id="appComment" name="appComment" cols="45" rows="6"></textarea>
+							<script type="text/javascript">
+								CKEDITOR.replace('appComment' ,
+									{
+										//skin : 'office2003'
+									});
+							</script>
+						</td>
+						<div id="warnAppComment" class="parsley-errors-list filled"></div>
+					</tr>
+					<tr>
+						<td colspan="2"><hr></td>
+					</tr>
 
-				<tr class="profItemA" style="display:none;">
-					<td class="profItemAA">パスコード</td>
-					<td><input type="text" id="profPCode" name="profPCode" size="35" value=""></td>
-				</tr>
-			</table>
-		</div>
-		<div id="editRightP">
-			<input type="hidden" id="newItem"   name="newItem"   value="<?php /* print $newItem; */ ?>">
-
-			写真表示<br><br>
-			<form enctype="multipart/form-data" action="cgi/fileUpload.php" method="post" id="fileSelector">
-				<input type="radio" id="photoUseNP"  name="photoUSE" value="P"><label for="photoUseNP">準備中</label>
-				<input type="radio" id="photoUseOK"  name="photoUSE" value="O"><label for="photoUseOK">表示可</label>
-				<input type="radio" id="photoUseNG"  name="photoUSE" value="G"><label for="photoUseNG">NG</label>
-				<input type="radio" id="photoUseNOT" name="photoUSE" value="N"><label for="photoUseNOT">写真ナシ</label>
-				<br>
-				<hr>
-				<table class="photoFileSele">
-					<thead>
-						<tr>
-							<th class="sepI">識別</th>
-							<th class="sepF">画像ファイル</th>
-							<th class="sepD">表示</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td class="sepI">1</td>
-							<td class="sepF"><input type="file" name="attF1" id="attF1"><br><div id="currF1"></div></td>
-							<td class="sepD"><input type="checkbox" name="useP1" id="useP1" class="usePhoto" value="U"></td>
-						</tr>
-
-						<tr>
-							<td class="sepI">2</td>
-							<td class="sepF"><input type="file" name="attF2" id="attF2"><br><div id="currF2"></div></td>
-							<td class="sepD"><input type="checkbox" name="useP2" id="useP2" class="usePhoto" value="U"></td>
-						</tr>
-
-						<tr>
-							<td class="sepI">3</td>
-							<td class="sepF"><input type="file" name="attF3" id="attF3"><br><div id="currF3"></div></td>
-							<td class="sepD"><input type="checkbox" name="useP3" id="useP3" class="usePhoto" value="U"></td>
-						</tr>
-
-						<tr>
-							<td class="sepI">4</td>
-							<td class="sepF"><input type="file" name="attF4" id="attF4"><br><div id="currF4"></div></td>
-							<td class="sepD"><input type="checkbox" name="useP4" id="useP4" class="usePhoto" value="U"></td>
-						</tr>
-
-						<tr>
-							<td class="sepI">5</td>
-							<td class="sepF"><input type="file" name="attF5" id="attF5"><br><div id="currF5"></div></td>
-							<td class="sepD"><input type="checkbox" name="useP5" id="useP5" class="usePhoto" value="U"></td>
-						</tr>
-
-						<tr>
-							<td class="sepI">サムネイル</td>
-							<td class="sepF"><input type="file" name="attTN" id="attTN"><br><div id="currTN"></div></td>
-							<td class="sepD"><input type="checkbox" name="useTN" id="useTN" class="usePhoto" value="U"></td>
-						</tr>
-
-						<tr class="NOTUSE">
-							<td class="sepI2">携帯大写真</td>
-							<td class="sepF2"><input type="file" name="attML" id="attML"><br><div id="currML"></div></td>
-							<td class="sepD2"><input type="checkbox" name="useML" id="useML" class="usePhoto" value="U"></td>
-						</tr>
-					</tbody>
+					<tr class="profItemA" style="display:none;">
+						<td class="profItemAA">パスコード</td>
+						<td><input type="text" id="profPCode" name="profPCode" size="35" value=""></td>
+					</tr>
 				</table>
-				<br>
-			</form>
+			</div>
+		</form>
+
+		<div id="editRightP">
+			写真表示<br><br>
+			<input type="radio" id="photoUseNP"  name="photoUSE" value="P"><label for="photoUseNP">準備中</label>
+			<input type="radio" id="photoUseOK"  name="photoUSE" value="O"><label for="photoUseOK">表示可</label>
+			<input type="radio" id="photoUseNG"  name="photoUSE" value="G"><label for="photoUseNG">NG</label>
+			<input type="radio" id="photoUseNOT" name="photoUSE" value="N"><label for="photoUseNOT">写真ナシ</label>
+			<br>
+			<hr>
+			<table class="photoFileSele">
+				<thead>
+					<tr>
+						<th class="sepI">識別</th>
+						<th class="sepF">画像ファイル</th>
+						<th class="sepD">表示</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td class="sepI">1</td>
+						<td class="sepF"><input type="file" name="attF1" id="attF1"><br><div id="currF1"></div></td>
+						<td class="sepD"><input type="checkbox" name="useP1" id="useP1" class="usePhoto" value="U"></td>
+					</tr>
+					<tr>
+						<td class="sepI">2</td>
+						<td class="sepF"><input type="file" name="attF2" id="attF2"><br><div id="currF2"></div></td>
+						<td class="sepD"><input type="checkbox" name="useP2" id="useP2" class="usePhoto" value="U"></td>
+					</tr>
+					<tr>
+						<td class="sepI">3</td>
+						<td class="sepF"><input type="file" name="attF3" id="attF3"><br><div id="currF3"></div></td>
+						<td class="sepD"><input type="checkbox" name="useP3" id="useP3" class="usePhoto" value="U"></td>
+					</tr>
+					<tr>
+						<td class="sepI">4</td>
+						<td class="sepF"><input type="file" name="attF4" id="attF4"><br><div id="currF4"></div></td>
+						<td class="sepD"><input type="checkbox" name="useP4" id="useP4" class="usePhoto" value="U"></td>
+					</tr>
+					<tr>
+						<td class="sepI">5</td>
+						<td class="sepF"><input type="file" name="attF5" id="attF5"><br><div id="currF5"></div></td>
+						<td class="sepD"><input type="checkbox" name="useP5" id="useP5" class="usePhoto" value="U"></td>
+					</tr>
+					<tr>
+						<td class="sepI">サムネイル</td>
+						<td class="sepF"><input type="file" name="attTN" id="attTN"><br><div id="currTN"></div></td>
+						<td class="sepD"><input type="checkbox" name="useTN" id="useTN" class="usePhoto" value="U"></td>
+					</tr>
+					<tr class="NOTUSE">
+						<td class="sepI2">携帯大写真</td>
+						<td class="sepF2"><input type="file" name="attML" id="attML"><br><div id="currML"></div></td>
+						<td class="sepD2"><input type="checkbox" name="useML" id="useML" class="usePhoto" value="U"></td>
+					</tr>
+				</tbody>
+			</table>
+			<br>
 		</div>
 	</div>
 
@@ -600,14 +620,8 @@
 				</table>
 			</div>
 
-
-
-
-
-
 			<div class="qaAsk" id="qaAsk3">
 				<table class="qaItem">
-
 					<tr class="qaItemA">
 						<td class="qaItemAA">項目11</td>	<td><input type="text" id="qa11" name="qa11" size="35" value=""></td>
 					</tr>
@@ -620,14 +634,10 @@
 					<tr>
 						<td class="qaItemAA">項目14</td>	<td><input type="text" id="qa14" name="qa14" size="35" value=""></td>
 					</tr>
-
 				</table>
 			</div>
-
-
 		</div>
 	</div>
-
 
 	<div id="profArea2">
 		<div class="profileBFld">
@@ -754,10 +764,5 @@
 
 	<br class="clear">
 </div>
-
-
-
-
-
 </body>
 </html>
