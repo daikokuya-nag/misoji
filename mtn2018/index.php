@@ -159,6 +159,7 @@
 
 	<!-- プロファイル -->
 	<div id="tabsProfile" class="tabArea">
+
 		<div id="tabProfTop">
 			<input type="button" value="新規プロファイル" onclick="newProf()"><br><br>
 		</div>
