@@ -118,16 +118,16 @@
 -->
 </head>
 <body>
-<input type="hidden" id="branchNo" name="branchNo" value="<?php print $branchNo; ?>">
-<input type="hidden" id="newNewsRec"  name="newNewsRec" value="<?php print dbNews5C::NEW_REC; ?>">
-<input type="hidden" id="newBlogRec"  name="newBlogRec" value="<?php print dbMBlog5C::NEW_REC; ?>">
+<input type="hidden" id="branchNo"   name="branchNo" value="<?php print $branchNo; ?>">
+<input type="hidden" id="newNewsRec" name="newNewsRec" value="<?php print dbNews5C::NEW_REC; ?>">
+<input type="hidden" id="newBlogRec" name="newBlogRec" value="<?php print dbMBlog5C::NEW_REC; ?>">
 
 <div id="tabA">
 	<ul>
+		<li><a href="#tabsProfile">プロファイル</a></li>
 		<li><a href="#tabsNews">ニュース</a></li>
 		<li><a href="#tabsRecruit">求人</a></li>
 		<li><a href="#tabsSystem">システム</a></li>
-		<li><a href="#tabsProfile">プロファイル</a></li>
 
 <!--
 		<li><a href="#tabsTop">とっぷ</a></li>
@@ -164,15 +164,12 @@
 		</div>
 
 		<div id="tabProfMid" class="tabMid">
-			<table id="profSeqList">
-				<thead id="profSeqListH"></thead>
-				<tbody id="profSeqListD"></tbody>
-			</table>
+			<div id="profSeqListD"></div>
 		</div>
 
 		<div id="tabProfBottom" class="tabBottomBtn">
 			<hr>
-			<input type="button" value="表示順反映" id="bldProfList" onclick="updProfSeq();" disabled="disabled">
+			<input type="button" value="表示順反映" id="bldProfList" onclick="updProfSeqPre();" disabled="disabled">
 			<?php
 				if(strcmp($mtn ,'Y') == 0) {
 					print('&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="全プロファイル一括更新" id="rebldAllProf" onclick="updAllProf();">');

@@ -2,6 +2,42 @@
 プロファイル編集
 ********************/
 
+/***
+プロファイルリスト
+***/
+div.prof1 {
+	float:left;
+	padding:5px;
+	margin:5px;
+	text-align:center;
+}
+
+#profSeqListD {
+	float:left;
+	overflow:auto;
+}
+
+tr.profItemA td {
+	border-bottom:1px solid #000000;
+}
+
+td.profItemAA {
+	border-right:1px solid #000000;
+}
+
+table.profItem {
+	border-collapse:collapse;
+}
+
+table.profItem tr td {
+	padding:2px;
+}
+
+
+
+/***
+プロファイル編集
+***/
 div#editLeftP {
 	float:left;
 }
@@ -15,43 +51,11 @@ div#editProfDlg {
 	padding-right:0.5em;
 }
 
-
-table#profSeqList {
-	border-collapse:collapse;
-}
-
-table#profSeqList tr td {
-	border:#000000 1px solid;
-	padding:3px;
-
-}
-
-table#profSeqList tr th {
-	border:#000000 1px solid;
-	padding:3px;
-
-}
-
-iframe#seleImgFile {
-	border:solid 1px silver;
-}
-
-
-div#profDirShow {
-	float:left;
-}
-
 div#editDir {
 	float:left;
 	margin-left:20px;
 }
 
-.whileDrag {
-	background-color:#ff2200;	/* ff0022 */
-}
-.whileDrag2 {
-	color:#00ff00;	/* ff0022 */
-}
 
 
 /*****
@@ -66,73 +70,6 @@ div#delDir {
 	color:#ff0000;
 	font-weight:bold;
 }
-
-
-/*****
-識別子変更のPOPUP
-*****/
-div#editDirDlg {
-	padding:5px;
-	line-height:1.5em;
-	display:none;
-	position:absolute;
-	background-color:#ffffff;
-
-
-	border: 5px solid #999;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-	border-radius: 5px;
-}
-
-
-/*************************************/
-#popup_titleDir {
-	font-size: 14px;
-	font-weight: bold;
-	text-align: center;
-	line-height: 1.75em;
-	color: #666;
-	background: #CCC url(../jq/css/images/title.gif) top repeat-x;
-	border: solid 1px #FFF;
-	border-bottom: solid 1px #999;
-	cursor: default;
-	padding: 0em;
-	margin: 0em;
-}
-
-#popup_contentDir {
-	background: 16px 16px no-repeat url(../jq/css/images/info.gif);
-	padding: 1em 1.75em;
-	margin: 0em;
-}
-
-#popup_contentDir.alert {
-	background-image: url(../jq/css/images/info.gif);
-}
-
-#popup_contentDir.confirm {
-	background-image: url(../jq/css/images/important.gif);
-}
-
-#popup_contentDir.prompt {
-	background-image: url(../jq/css/images/help.gif);
-}
-
-#popup_messageDir {
-	padding-left: 48px;
-}
-
-#popup_panelDir {
-	text-align: center;
-	margin: 1em 0em 0em 1em;
-}
-
-#popup_promptDir {
-	margin: .5em 0em;
-}
-
-
 
 #DelDirDlg {
 	font-family: Arial, sans-serif;
@@ -193,72 +130,96 @@ div#editDirDlg {
 }
 
 
-#profSeqList {
-/*	width:380px;*/
+
+/*****
+識別子変更のPOPUP
+*****/
+div#editDirDlg {
+	padding:5px;
+	line-height:1.5em;
+	display:none;
+	position:absolute;
+	background-color:#ffffff;
+
+
+	border: 5px solid #999;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
 }
 
-#profSeqListHTR {
+div#profDirShow {
 	float:left;
 }
 
-#profSeqListH {
-	width:360px;
+#popup_titleDir {
+	font-size: 14px;
+	font-weight: bold;
+	text-align: center;
+	line-height: 1.75em;
+	color: #666;
+	background: #CCC url(../jq/css/images/title.gif) top repeat-x;
+	border: solid 1px #FFF;
+	border-bottom: solid 1px #999;
+	cursor: default;
+	padding: 0em;
+	margin: 0em;
 }
 
-#profSeqListD {
-	float:left;
-/*	height:500px; */
-	overflow:auto;
-	width:694px;
+#popup_contentDir {
+	background: 16px 16px no-repeat url(../jq/css/images/info.gif);
+	padding: 1em 1.75em;
+	margin: 0em;
+}
+
+#popup_contentDir.alert {
+	background-image: url(../jq/css/images/info.gif);
+}
+
+#popup_contentDir.confirm {
+	background-image: url(../jq/css/images/important.gif);
+}
+
+#popup_contentDir.prompt {
+	background-image: url(../jq/css/images/help.gif);
+}
+
+#popup_messageDir {
+	padding-left: 48px;
+}
+
+#popup_panelDir {
+	text-align: center;
+	margin: 1em 0em 0em 1em;
+}
+
+#popup_promptDir {
+	margin: .5em 0em;
 }
 
 
-.disp {
-	min-width:60px;
-	max-width:60px;
-	text-align:left;
-}
 
-.dir {
-	min-width:120px;
-	max-width:120px;
-	text-align:left;
-}
 
-.name {
-	min-width:120px;
-	max-width:120px;
-	text-align:left;
-}
 
-.workRest {
-	min-width:300px;
-	max-width:300px;
-	text-align:left;
-}
+/*******************************************************************************************/
 
-.edit {
-	min-width:40px;
-	max-width:40px;
-	text-align:left;
+
+
+
+
+.whileDrag {
+	background-color:#ff2200;	/* ff0022 */
+}
+.whileDrag2 {
+	color:#00ff00;	/* ff0022 */
 }
 
 
-tr.profItemA td {
-	border-bottom:1px solid #000000;
-}
 
-td.profItemAA {
-	border-right:1px solid #000000;
-}
 
-table.profItem {
-	border-collapse:collapse;
-}
+/*************************************/
 
-table.profItem tr td {
-	padding:2px;
-}
+
 
 
 form#workTimeList {
@@ -398,14 +359,6 @@ table.works tr td.sepFromToTo {
 }
 
 
-
-/***** ローディングアイコン *****/
-div#loadingProfile {
-	position:relative;
-	z-index:999;
-	top:-300px;
-	left:500px;
-}
 
 
 /***** 入力エリア表示 *****/
