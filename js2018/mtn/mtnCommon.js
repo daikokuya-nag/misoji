@@ -339,7 +339,7 @@ var extS2;
 	});
 
 	result.done(function(response) {
-					//console.debug(response);
+					console.debug(response);
 		list = response['SEQ']['data'];
 		$("#imgList").html(list);
 
@@ -353,7 +353,7 @@ var extS2;
 	});
 
 	result.fail(function(result, textStatus, errorThrown) {
-			console.debug('error at getImgFiles(:' + result.status + ' ' + textStatus);
+			console.debug('error at getImgFiles:' + result.status + ' ' + textStatus);
 	});
 
 	result.always(function() {
@@ -436,8 +436,10 @@ var imgNo;
 
 	if(imgClass == 'TOP_HEADER') {
 		imgNo = $('#topImg' + param1).val();
+		if(imgNo) {
 		if(imgNo.length >= 1) {
 			$("#seleImg" + imgNo).prop("checked", true);
+		}
 		}
 	}
 

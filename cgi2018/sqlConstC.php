@@ -1,1 +1,0 @@
-<?php/** * SQLアクセス時の定数 * * @copyright * @license * @author * @link */	define('LOCATIONURL' ,'localhost');	define('USER'        ,'misoji');	define('DBPASS'      ,'5yfpru9a');	define('DBNAME'      ,'misoji');class sqlConst5C {	const LOCATIONURL = 'localhost';	const USER        = 'root';	const DBPASS      = 'henokappa';	const DBNAME      = 'misoji2018';}?>

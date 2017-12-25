@@ -59,11 +59,25 @@ var result;
 		var useImg = useImgList.split(':');
 		var imgNo  = imgNoList.split(':');
 
-		extS1 = extList.split(',');
-		idxMax = extS1.length - 1;
-		for(idx=0 ;idx<idxMax ;idx++) {
-			extS2 = extS1[idx].split(':');
-			imgExt[extS2[0]] = extS2[1];
+		if(seq.length == 4) {
+			extS1 = extList.split(',');
+			idxMax = extS1.length - 1;
+			for(idx=0 ;idx<idxMax ;idx++) {
+				extS2 = extS1[idx].split(':');
+				imgExt[extS2[0]] = extS2[1];
+			}
+		} else {
+			seq[0] = '';
+			seq[1] = '';
+			seq[2] = '';
+			seq[3] = '';
+		}
+
+		if(imgNoList.length <= 0) {
+			imgNo[0] = 0;
+			imgNo[1] = 0;
+			imgNo[2] = 0;
+			imgNo[3] = 0;
 		}
 
 		var trTag = setTRImgTag(seq ,imgNo ,imgExt);
@@ -111,6 +125,7 @@ var imgTag;
 
 	for(idx=0 ;idx<idxMax ;idx++) {
 		seqID = seqList[idx];
+		paramIdx = -1;
 		if(seqID == 'A') {
 			paramIdx = 0;
 		}
@@ -124,17 +139,19 @@ var imgTag;
 			paramIdx = 3;
 		}
 
-		imgNo = imgNoList[paramIdx];
-
 		//表示する画像の指定
-		if(imgNoList[paramIdx].length >= 1) {
-			imgTag = '<img src="../img/1/TOP_HEADER/' + imgNo + '.' + imgExtList[imgNo] + '">';
-		} else {
-			imgTag = '';
-		}
+		imgTag = '';
+		if(paramIdx >= 0) {
+			imgNo = imgNoList[paramIdx];
 
-		//画像Noの保持
-		$("#topImg" + seqID).val(imgNo);
+			if(imgNoList[paramIdx].length >= 1) {
+				imgTag = '<img src="../img/1/TOP_HEADER/' + imgNo + '.' + imgExtList[imgNo] + '">';
+			}
+
+
+			//画像Noの保持
+			$("#topImg" + seqID).val(imgNo);
+		}
 
 		ret = ret +
 		'<tr id="topImg-' + seqID + '">' +
