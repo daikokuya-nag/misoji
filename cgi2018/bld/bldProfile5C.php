@@ -226,7 +226,7 @@ class bldProfile5C {
 		$ret = '<div id="sort-' . $id . '" class="prof1 ui-state-default">' .
 			'<div class="tnOut">' . $photoStr . '</div>' .
 			'<div class="profItem profName">' . $name . '</div>' .
-			'<div class="profItem profEdit">' . $editBtn . '</div>' .
+			'<div class="profItem profEdit"><div class="editBtn">' . $editBtn . '</div><div class="dispBtn">' . $dispCB . '</div></div>' .
 			'</div>';
 
 		return $ret;

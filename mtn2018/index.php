@@ -168,7 +168,7 @@
 
 		<div id="tabProfBottom" class="tabBottomBtn">
 			<hr>
-			<input type="button" value="表示順反映" id="bldProfList" onclick="updProfSeqPre();" disabled="disabled">
+			<input type="button" value="表示順反映" id="bldProfList" onclick="updProfSeq();" disabled="disabled">
 			<?php
 				if(strcmp($mtn ,'Y') == 0) {
 					print('&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="全プロファイル一括更新" id="rebldAllProf" onclick="updAllProf();">');
@@ -270,7 +270,7 @@
 
 		<div id="tabTopBottom" class="tabBottomBtn">
 			<hr>
-			<input type="button" value="出力" id="bldTopImgDispSeq" onclick="updTopImgSeqPre();" disabled="disabled">
+			<input type="button" value="出力" id="bldTopImgDispSeq" onclick="updTopImgSeq();" disabled="disabled">
 		</div>
 	</div>
 

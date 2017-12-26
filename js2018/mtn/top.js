@@ -10,8 +10,15 @@ $(document).ready(function(){
 /***** 表示順のドロップ時の動作 *****/
 $(document).on('sortstop' ,'#topImgList' ,function(){
 
-	$("#bldTopImgDispSeq").prop('disabled' ,false);
+	enableWriteTopImgSeq();
 });
+
+function enableWriteTopImgSeq() {
+
+	$("#bldTopImgDispSeq").prop('disabled' ,false);
+}
+
+
 
 $(window).load(function(){
 
@@ -26,9 +33,7 @@ $(window).load(function(){
 function getTopImgList() {
 
 var branchNo = $('#branchNo').val();
-var result;
-
-	result = $.ajax({
+var result = $.ajax({
 		type : "get" ,
 		url  : "../cgi2018/ajax/mtn/getPageVals.php" ,
 		data : {
@@ -59,11 +64,25 @@ var result;
 		var useImg = useImgList.split(':');
 		var imgNo  = imgNoList.split(':');
 
-		extS1 = extList.split(',');
-		idxMax = extS1.length - 1;
-		for(idx=0 ;idx<idxMax ;idx++) {
-			extS2 = extS1[idx].split(':');
-			imgExt[extS2[0]] = extS2[1];
+		if(seq.length == 4) {
+			extS1 = extList.split(',');
+			idxMax = extS1.length - 1;
+			for(idx=0 ;idx<idxMax ;idx++) {
+				extS2 = extS1[idx].split(':');
+				imgExt[extS2[0]] = extS2[1];
+			}
+		} else {
+			seq[0] = '';
+			seq[1] = '';
+			seq[2] = '';
+			seq[3] = '';
+		}
+
+		if(imgNoList.length <= 0) {
+			imgNo[0] = 0;
+			imgNo[1] = 0;
+			imgNo[2] = 0;
+			imgNo[3] = 0;
 		}
 
 		var trTag = setTRImgTag(seq ,imgNo ,imgExt);
@@ -140,7 +159,7 @@ var imgTag;
 		'<tr id="topImg-' + seqID + '">' +
 			'<td class="topImgTN" id="topImgTN' + seqID + '">' + imgTag + '</td>' +
 			'<td class="topImgSele"><input type="button" value="画像選択" name="attTopImg' + seqID + '" id="attTopImg' + seqID + '" onclick="showSeleImg(\'TOP_HEADER\' ,\'' + seqID + '\')"><br><div id="currTopImg' + seqID + '">&nbsp;</div></td>' +
-			'<td class="topImgDisp"><input type="checkbox" name="useTopImg' + seqID + '" id="useTopImg' + seqID + '" class="useTopImg" value="U"></td>' +
+			'<td class="topImgDisp"><input type="checkbox" name="useTopImg' + seqID + '" id="useTopImg' + seqID + '" class="useTopImg" value="U" onchange="enableWriteTopImgSeq();"></td>' +
 		'</tr>';
 	}
 
@@ -151,52 +170,7 @@ var imgTag;
 /********************
 表示順、表示/非表示更新時の出力
 ********************/
-function updTopImgSeqPre() {
-
-var result = getSess();
-
-	result.done(function(response) {
-					//console.debug(response);
-		if(response == SESS_OWN_INTIME) {
-				writeTopImgSeqPreA();
-		} else {
-				alert('長時間操作がなかったため接続が切れました。ログインしなおしてください。');
-//				location.href = 'login.html';
-		}
-	});
-
-	result.fail(function(result, textStatus, errorThrown) {
-			console.debug('error at updProfSeqPre:' + result.status + ' ' + textStatus);
-	});
-
-	result.always(function() {
-	});
-}
-
-/********************
-セッション情報の更新
-********************/
-function writeTopImgSeqPreA() {
-
-var result = updSess();
-
-	result.done(function(response) {
-					//console.debug(response);
-		writeTopImgSeqDisp();
-	});
-
-	result.fail(function(result, textStatus, errorThrown) {
-			console.debug('error at writeTopImgSeqPreA:' + result.status + ' ' + textStatus);
-	});
-
-	result.always(function() {
-	});
-}
-
-/********************
-表示順を出力
-********************/
-function writeTopImgSeqDisp() {
+function updTopImgSeq() {
 
 var branchNo = $('#branchNo').val();
 var dispSW   = $(".useTopImg").serialize();
@@ -207,29 +181,30 @@ var seleImgB = $('#topImgB').val();
 var seleImgC = $('#topImgC').val();
 var seleImgD = $('#topImgD').val();
 
-var sendData;
-
-	sendData = imgOrder + '&branchNo=' + branchNo + '&' + dispSW +
+var sendData = imgOrder + '&branchNo=' + branchNo + '&' + dispSW +
 		'&imgNoA=' + seleImgA + '&imgNoB=' + seleImgB + '&imgNoC=' + seleImgC + '&imgNoD=' + seleImgD;
 
 console.debug(sendData);
 
-var result;
-
-	result = $.ajax({
+var result = $.ajax({
 		type  : "post" ,
 		url   : "../cgi2018/ajax/mtn/writeTopImgDispSeq.php" ,
-		data  : sendData ,
-		cache : false
+		data  : sendData  ,
+		cache : false     ,
+		dataType : 'json' ,
 	});
-
 
 	result.done(function(response) {
 					console.debug(response);
 
+		if(response['SESSCOND'] == SESS_OWN_INTIME) {
 //		showProfListAll();		//リスト再表示
 //		bldProfListHTML(bld);	//アルバムページ再出力
 //		bldProfSitemap();
+		} else {
+				alert('長時間操作がなかったため接続が切れました。ログインしなおしてください。');
+//				location.href = 'login.html';
+		}
 	});
 
 	result.fail(function(result, textStatus, errorThrown) {
@@ -239,6 +214,7 @@ var result;
 	result.always(function() {
 	});
 }
+
 
 /********************
 リスト再表示
@@ -252,7 +228,6 @@ var profListTag;
 		type : "get" ,
 		url  : "cgi/ajax/bldProfList.php" ,
 		data : {
-			groupNo  : groupNo  ,
 			branchNo : branchNo
 		} ,
 

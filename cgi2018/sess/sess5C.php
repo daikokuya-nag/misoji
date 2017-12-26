@@ -43,7 +43,13 @@ class sess5C {
 	パラメータ：自セッションID
 	戻り値　　：-
 	********************/
-	function getSessCond($ownSessID) {
+	function getSessCond($ownSessID=null) {
+
+		if(is_null($ownSessID)) {
+			$sessID = session_id();
+		} else {
+			$sessID = $ownSessID;
+		}
 
 		$fileName = self::getFileName();
 
@@ -51,7 +57,7 @@ class sess5C {
 			$line = funcs5C::readFile($fileName);
 					logFile5C::debug('セッションファイル有');
 			$sessData = explode(self::SEPT ,$line);
-			$ret = self::getTimeoutCond($ownSessID ,$sessData[0] ,$sessData[1]);
+			$ret = self::getTimeoutCond($sessID ,$sessData[0] ,$sessData[1]);
 		} else {
 			/***** ファイルナシ *****/
 					logFile5C::debug('セッションファイルナシ');
@@ -67,14 +73,20 @@ class sess5C {
 	パラメータ：-
 	戻り値　　：-
 	********************/
-	function delSessCond($ownSessID) {
+	function delSessCond($ownSessID=null) {
+
+		if(is_null($ownSessID)) {
+			$sessID = session_id();
+		} else {
+			$sessID = $ownSessID;
+		}
 
 		$timestamp = strtotime('-30 minute');	/* -10 minute */
 		$format    = 'Y' . dateTime5C::DATE_SEP . 'm' . dateTime5C::DATE_SEP . 'd' . ' ' . 'H' . dateTime5C::TIME_SEP . 'i' . dateTime5C::TIME_SEP . 's';
 		$currDT    = date($format, $timestamp);
 
 
-		$str = $ownSessID . self::SEPT . $currDT;
+		$str = $sessID . self::SEPT . $currDT;
 
 		$fileName = self::getFileName();
 
@@ -90,9 +102,15 @@ class sess5C {
 	パラメータ：自セッションID
 	戻り値　　：-
 	********************/
-	function updSessCond($ownSessID) {
+	function updSessCond($ownSessID=null) {
 
 				/* $currDT = dateTime5C::getCurrDT(); */
+		if(is_null($ownSessID)) {
+			$sessID = session_id();
+		} else {
+			$sessID = $ownSessID;
+		}
+
 
 		$mtnMode = false;
 		if(isset($_SESSION['MTN'])) {
@@ -106,7 +124,7 @@ class sess5C {
 			$format    = 'Y' . dateTime5C::DATE_SEP . 'm' . dateTime5C::DATE_SEP . 'd' . ' ' . 'H' . dateTime5C::TIME_SEP . 'i' . dateTime5C::TIME_SEP . 's';
 			$currDT    = date($format, $timestamp);
 
-			$str = $ownSessID . self::SEPT . $currDT;
+			$str = $sessID . self::SEPT . $currDT;
 
 			$fileName = self::getFileName();
 

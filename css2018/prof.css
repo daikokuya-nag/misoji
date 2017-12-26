@@ -474,57 +474,8 @@ div.name {
 	float:left;
 }
 
-
-
-table#profSeqList2 {
-	border-collapse:collapse;
-}
-
-table#profSeqList2 tr td {
-/*	border:#000000 1px solid;*/
-	padding:3px;
-
-}
-
-table#profSeqList2 tr th {
-/*	border:#000000 1px solid;*/
-	padding:3px;
-
-}
-
-
-
-table#profSeqList2 {
-/*	width:380px;*/
-}
-
-table#profSeqList2 thead tr th {
-	color:#000;
-}
-table#profSeqList2 tbody tr td {
-	color:#000;
-}
-
 #profSeqListHTR2 {
 	float:left;
-}
-
-#profSeqListHTR2 th {
-/*
-	border-left   : 1px solid #000;
-	border-right  : 1px solid #000;
-	border-top    : 1px solid #000;
-*/
-/*	border-bottom : 1px solid #000;*/
-}
-
-tr.profSeqListD2TR td {
-/*
-	border-left   : 1px solid #000;
-	border-right  : 1px solid #000;
-	border-top    : 1px solid #000;
-	border-bottom : 1px solid #000;
-*/
 }
 
 
@@ -544,4 +495,18 @@ tr.profSeqListD2TR td {
 
 #profSeqList2 #profSeqListD2 tr td {
 	background-color : #fff;	/*e5e5e5;*/
+}
+
+
+div.profEdit {
+	margin-top: 5px;
+}
+
+div.dispBtn {
+	margin-top: 1px;
+	float: right;
+}
+
+div.editBtn {
+	float: left;
 }

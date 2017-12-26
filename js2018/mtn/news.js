@@ -128,10 +128,8 @@ var dtop = {
 ********************/
 function getNewsList() {
 
-var result;
 var branchNo = $('#branchNo').val();
-
-	result = $.ajax({
+var result = $.ajax({
 		type : "get" ,
 		url  : "../cgi2018/ajax/mtn/getNewsList.php" ,
 		data : {
@@ -181,10 +179,9 @@ var dd = ( "00" + ddVal).substr(-2);
 var dateStr = yy + '-' + mm + '-' + dd;
 
 var phraseData;
-var result;
 
 	//定型文を取り出して本文の初期値にする
-	result = $.ajax({
+var result = $.ajax({
 		type : "get" ,
 		url  : "../cgi2018/ajax/mtn/getFixPhrase.php" ,
 		data : {
@@ -248,9 +245,7 @@ var branchNo = $('#branchNo').val();
 ********************/
 function getNewsData(branchNo ,newsNo ,mode) {
 
-var result;
-
-	result = $.ajax({
+var result = $.ajax({
 		type : "get" ,
 		url  : "../cgi2018/ajax/mtn/getNews1.php" ,
 		data : {
@@ -370,49 +365,6 @@ function dispWriteNewsBtn() {
 ********************/
 function updNewsDisp() {
 
-var result = getSess();
-
-	result.done(function(response) {
-					//console.debug(response);
-		if(response == SESS_OWN_INTIME) {
-			writeNewsDispPre();
-		} else {
-			alert('長時間操作がなかったため接続が切れました。ログインしなおしてください。');
-			$("#editNews").dialog("close");
-			location.href = 'login.html';
-		}
-	});
-
-	result.fail(function(result, textStatus, errorThrown) {
-			console.debug('error at updNewsDisp:' + result.status + ' ' + textStatus);
-	});
-
-	result.always(function() {
-	});
-}
-
-/********************
-セッション情報の更新
-********************/
-function writeNewsDispPre() {
-
-var result = updSess();
-
-	result.done(function(response) {
-				//console.debug(response);
-		updNewsDispMain();
-	});
-
-	result.fail(function(result, textStatus, errorThrown) {
-			console.debug('error at writeNewsDispPre:' + result.status + ' ' + textStatus);
-	});
-
-	result.always(function() {
-	});
-}
-
-function updNewsDispMain() {
-
 var dispCnt = 0;	//表示がONの件数
 var listMax = NEWS_NO_LIST.length;
 
@@ -441,19 +393,26 @@ var result;
 		type  : "post" ,
 		url   : "../cgi2018/ajax/mtn/writeNewsDisp.php" ,
 		data  : dataList ,
-		cache : false
-									//		dataType :'json' ,
+		cache : false    ,
+		dataType :'json' ,
 	});
 
 	result.done(function(response) {
 					//console.debug(response);
-		dispCnt = response;
-		if(dispCnt >= 1) {
-			bldNewsHTML();
-					//bldNewsSitemap();	/* サイトマップ出力 */
-			alert('出力完了 (' + dispCnt + '件)');
+
+		if(response['SESSCOND'] == SESS_OWN_INTIME) {
+			dispCnt = response['DISPCOUNT'];
+			if(dispCnt >= 1) {
+				bldNewsHTML();
+						//bldNewsSitemap();	/* サイトマップ出力 */
+				alert('出力完了 (' + dispCnt + '件)');
+			} else {
+				alert('表示するニュースが0件でした');
+			}
 		} else {
-			alert('表示するニュースが0件でした');
+			alert('長時間操作がなかったため接続が切れました。ログインしなおしてください。');
+			$("#editNews").dialog("close");
+			location.href = 'login.html';
 		}
 	});
 
@@ -463,8 +422,6 @@ var result;
 
 	result.always(function(result) {
 	});
-
-
 }
 
 
@@ -476,52 +433,6 @@ var result;
 セッション状態の取得
 ********************/
 function writeNewsPre() {
-
-var result = getSess();
-
-	result.done(function(response) {
-					//console.debug(response);
-		if(response == SESS_OWN_INTIME) {
-				writeNewsPreA(response);
-		} else {
-				alert('長時間操作がなかったため接続が切れました。ログインしなおしてください。');
-//				$("#editNews").dialog("close");
-//				location.href = 'login.html';
-		}
-	});
-
-	result.fail(function(result, textStatus, errorThrown) {
-			console.debug('error at writeNewsPre:' + result.status + ' ' + textStatus);
-	});
-
-	result.always(function() {
-	});
-}
-
-/********************
-セッション情報の更新
-********************/
-function writeNewsPreA(sess) {
-
-var result = updSess();
-
-	result.done(function(response) {
-					//console.debug(response);
-			writeNews();
-	});
-
-	result.fail(function(result, textStatus, errorThrown) {
-			console.debug('error at writeNewsPreA:' + result.status + ' ' + textStatus);
-	});
-
-	result.always(function() {
-	});
-}
-
-/********************
-ニュース書き出し
-********************/
-function writeNews() {
 
 	/* ニュース書き出し */
 var branchNo = $('#branchNo').val();
@@ -542,9 +453,8 @@ var cate = $("input[name='newsCate']:checked").val();
 var reshowTag;
 var newsIDTag;
 
-var result;
 					//console.debug('書き出すニュースNo:' + newsNo);
-	result = $.ajax({
+var result = $.ajax({
 		type  : "post" ,
 		url   : "../cgi2018/ajax/mtn/writeNews.php" ,
 		data  : {
@@ -570,6 +480,16 @@ var result;
 
 	result.done(function(response) {
 					//console.debug(response);
+
+///		if(response == SESS_OWN_INTIME) {
+///				writeNewsPreA(response);
+///		} else {
+///				alert('長時間操作がなかったため接続が切れました。ログインしなおしてください。');
+/////				$("#editNews").dialog("close");
+/////				location.href = 'login.html';
+///		}
+
+
 		reshowTag = response['tag'];
 		newsIDTag = response['id'];
 
@@ -580,6 +500,19 @@ var result;
 
 	result.fail(function(result, textStatus, errorThrown) {
 			console.debug('error at writeNews:' + result.status + ' ' + textStatus);
+	});
+
+	result.always(function() {
+	});
+
+
+
+	result.done(function(response) {
+					//console.debug(response);
+	});
+
+	result.fail(function(result, textStatus, errorThrown) {
+			console.debug('error at writeNewsPre:' + result.status + ' ' + textStatus);
 	});
 
 	result.always(function() {

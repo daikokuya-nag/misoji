@@ -6,52 +6,33 @@
 /********************
 セッション状態の取得
 ********************/
-function writeProfPreA() {
+function writeProf() {
 
-var result = getSess();
+var vals = setVals();
+var result = $.ajax({
+		type : "post" ,
+		url  : "../cgi2018/ajax/mtn/writeProfile.php" ,
+
+		dataType    : "text",
+		data        : vals  ,
+		processData : false ,
+		contentType : false ,
+
+		cache    : false  ,
+		dataType : 'json' ,
+	});
 
 	result.done(function(response) {
-					//console.debug(response);
-		if(response == SESS_OWN_INTIME) {
-			updSess();	//セッション情報更新
-			writeProfile();
+					console.debug(response);
+
+		if(response['SESSCOND'] == SESS_OWN_INTIME) {
+//			bldProfHTML(response);			/* HTMLファイル出力 */
+//			writeProfileNext();
 		} else {
 			alert('長時間操作がなかったため接続が切れました。ログインしなおしてください。');
 			$("#editProfDlg").dialog("close");
 			location.href = 'login.html';
 		}
-	});
-
-	result.fail(function(result, textStatus, errorThrown) {
-					console.debug('error at writeProfPre:' + result.status + ' ' + textStatus);
-	});
-
-	result.always(function() {
-	});
-}
-
-function writeProfile() {
-
-var vals = setVals();
-var result;
-
-	result = $.ajax({
-		type : "post" ,
-		url  : "../cgi2018/ajax/mtn/writeProfile.php" ,
-
-		dataType    : "text",
-		data        : vals ,
-		processData : false ,
-		contentType : false ,
-
-		cache    : false
-//		dataType : 'json' ,
-	});
-
-	result.done(function(response) {
-					console.debug(response);
-//			bldProfHTML(response);			/* HTMLファイル出力 */
-//			writeProfileNext();
 	});
 
 	result.fail(function(result, textStatus, errorThrown) {

@@ -9,9 +9,20 @@ PHP5
 
 	require_once dirname(__FILE__) . '/../../db/dbProfile5C.php';
 	require_once dirname(__FILE__) . '/../../db/dbWorks5C.php';
+	require_once dirname(__FILE__) . '/../../sess/sess5C.php';
 
-	setProfile($_POST);
-	setWork($_POST);
+	$cond = sess5C::getSessCond();
+
+	if($cond == sess5C::OWN_INTIME) {
+		sess5C::updSessCond();
+
+		setProfile($_POST);
+		setWork($_POST);
+	}
+
+	$ret['SESSCOND'] = $cond;
+	print json_encode($ret);
+
 
 	function setProfile($postVals) {
 

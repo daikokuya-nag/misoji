@@ -38,7 +38,7 @@ $(document).ready(function(){
 /***** 表示順のドロップ時の動作 *****/
 $(document).on('sortstop' ,'#profSeqListD' ,function(){
 
-	$("#bldProfList").prop('disabled' ,false);
+	enableWriteProfSeq();
 });
 
 $(window).load(function(){
@@ -54,8 +54,7 @@ $(window).load(function(){
 				click:function() {
 					var chkEnter = checkProfEnter();
 					if(chkEnter) {
-alert('OK');
-//						writeProfPreA();
+						writeProf();
 					} else {
 alert('any error');
 						//alert(chkEnter);
@@ -82,10 +81,7 @@ alert('any error');
 function getProfileList() {
 
 var branchNo = $('#branchNo').val();
-var result;
-
-
-	result = $.ajax({
+var result = $.ajax({
 		type : "get" ,
 		url  : "../cgi2018/ajax/mtn/getProfileList.php" ,
 		data : {
@@ -113,6 +109,12 @@ var result;
 
 	result.always(function() {
 	});
+}
+
+
+function enableWriteProfSeq() {
+
+	$("#bldProfList").prop('disabled' ,false);
 }
 
 
@@ -236,14 +238,12 @@ var chk = false;
 ********************/
 function editProf(dir) {
 
-var branchNo = $('#branchNo').val();
-var bVal;
-var result;
-
 	$('#newProf').val('edit');
 	setShowProfDir(dir);
 
-	result = $.ajax({
+var branchNo = $('#branchNo').val();
+var bVal;
+var result = $.ajax({
 		type : "get" ,
 		url  : "../cgi2018/ajax/mtn/getProfile.php" ,
 		data : {
@@ -412,96 +412,49 @@ console.debug(currID + ' ' + newID);
 /********************
 表示順、表示/非表示更新時の出力
 ********************/
-function updProfSeqPre() {
-
-var result = getSess();
-
-	result.done(function(response) {
-					//console.debug(response);
-		if(response == SESS_OWN_INTIME) {
-				writeProfSeqPreA();
-		} else {
-				alert('長時間操作がなかったため接続が切れました。ログインしなおしてください。');
-//				location.href = 'login.html';
-		}
-	});
-
-	result.fail(function(result, textStatus, errorThrown) {
-			console.debug('error at updProfSeqPre:' + result.status + ' ' + textStatus);
-	});
-
-	result.always(function() {
-	});
-}
-
-/********************
-セッション情報の更新
-********************/
-function writeProfSeqPreA() {
-
-var result = updSess();
-
-	result.done(function(response) {
-					//console.debug(response);
-		writeProfSeqDisp();
-	});
-
-	result.fail(function(result, textStatus, errorThrown) {
-			console.debug('error at writeProfSeqPreA:' + result.status + ' ' + textStatus);
-	});
-
-	result.always(function() {
-	});
-}
-
-/********************
-表示順を出力
-********************/
-function writeProfSeqDisp() {
+function updProfSeq() {
 
 var branchNo  = $('#branchNo').val();
 var dispSW    = $(".dispProfSW").serialize();
 var profOrder = $("#profSeqListD").sortable('serialize');
 
-var sendData;
+var dataVal = profOrder + '&branchNo=' + branchNo + '&' + dispSW;
 
-	sendData = profOrder + '&branchNo=' + branchNo
+			//console.debug(dataVal);
 
-console.debug(sendData);
+var result = $.ajax({
+		type : "post" ,
+		url  : "../cgi2018/ajax/mtn/writeProfSeqDisp.php" ,
+		data : dataVal ,
 
-//var result;
-//
-//	result = $.ajax({
-//		type : "post" ,
-//		url  : "cgi/ajax/writeProfSeqDisp.php" ,
-//					//		data : profOrder ,		// see commonA.js
-//
-//		data : {
-//			groupNo  : groupNo  ,
-//			branchNo : branchNo ,
-//			dispSW   : dispSW   ,
-//			order    : profOrder
-//		} ,
-//
-//		cache : false
-//	};
-//
-//
-//	result.done(function(response) {
-//					//console.debug(response);
-//
-////		showProfListAll();		//リスト再表示
-////		bldProfListHTML(bld);	//アルバムページ再出力
-////		bldProfSitemap();
-//	});
-//
-//	result.fail(function(result, textStatus, errorThrown) {
-//			console.debug('error at writeProfSeqDisp:' + result.status + ' ' + textStatus);
-//	});
-//
-//	result.always(function() {
-//	});
+		cache    : false  ,
+		dataType : 'json' ,
+	});
+
+
+	result.done(function(response) {
+					//console.debug(response);
+
+		if(response['SESSCOND'] == SESS_OWN_INTIME) {
+//				writeProfSeqPreA();
+		} else {
+				alert('長時間操作がなかったため接続が切れました。ログインしなおしてください。');
+//				location.href = 'login.html';
+		}
+
+//		showProfListAll();		//リスト再表示
+//		bldProfListHTML(bld);	//アルバムページ再出力
+//		bldProfSitemap();
+	});
+
+	result.fail(function(result, textStatus, errorThrown) {
+			console.debug('error at writeProfSeqDisp:' + result.status + ' ' + textStatus);
+	});
+
+	result.always(function() {
+	});
 }
+
 
 /********************
 リスト再表示
@@ -515,7 +468,6 @@ var profListTag;
 		type : "get" ,
 		url  : "cgi/ajax/bldProfList.php" ,
 		data : {
-			groupNo  : groupNo  ,
 			branchNo : branchNo
 		} ,
 
@@ -535,10 +487,10 @@ var profListTag;
 		complete : function(result) {
 					//alert(newTag['data']);
 			/*** ニュース埋め込み用 ***/
-			$("#profListD").html(profListTag['news']['data']);
+//			$("#profListD").html(profListTag['news']['data']);
 
 			/*** 定型文埋め込み用 ***/
-			$("#profListFPD").html(profListTag['news']['data']);
+//			$("#profListFPD").html(profListTag['news']['data']);
 
 			/*** プロファイルリスト ***/
 			$("#profSeqListD").html(profListTag['prof']['data']);

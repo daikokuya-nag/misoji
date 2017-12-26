@@ -7,9 +7,18 @@ PHP5
 	session_start();
 
 	require_once dirname(__FILE__) . '/../../db/dbNews5C.php';
+	require_once dirname(__FILE__) . '/../../sess/sess5C.php';
 
-	$news = new dbNews5C();
-	$dispCnt = $news->updDisp($_POST);
+	$cond = sess5C::getSessCond();
 
-	print $dispCnt;
+	if($cond == sess5C::OWN_INTIME) {
+		sess5C::updSessCond();
+
+		$news = new dbNews5C();
+		$dispCnt = $news->updDisp($_POST);
+		$ret['DISPCOUNT'] = $dispCnt;
+	}
+
+	$ret['SESSCOND'] = $cond;
+	print json_encode($ret);
 ?>

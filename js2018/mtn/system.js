@@ -81,11 +81,17 @@ var str = CKEDITOR.instances.systemStr.getData();
 				str      : str
 			} ,
 
-			cache : false
+			cache : false    ,
+			dataType :'json'
 		});
 
 		result.done(function(response) {
 						//console.debug(response);
+			if(response['SESSCOND'] == SESS_OWN_INTIME) {
+			} else {
+				alert('長時間操作がなかったため接続が切れました。ログインしなおしてください。');
+				location.href = 'login.html';
+			}
 		});
 
 		result.fail(function(result, textStatus, errorThrown) {
